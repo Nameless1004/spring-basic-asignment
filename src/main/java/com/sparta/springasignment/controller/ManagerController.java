@@ -36,7 +36,7 @@ public class ManagerController {
         return save;
     }
 
-    @GetMapping("/managers/{id}")
+    @PutMapping("/managers/{id}")
     @ResponseBody
     public ManagerResponseDto updateManager(@PathVariable Long id, @RequestBody ManagerUpdateRequestDto dto){
         return service.updateManager(id, dto);

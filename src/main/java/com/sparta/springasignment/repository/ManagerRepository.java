@@ -36,7 +36,7 @@ public class ManagerRepository {
     }
 
     public void update(Manager manager) {
-        String sql = "UPDATE managers SET name = ?, email = ?, create_time = ?, updated_time = ? where manager_id = ?";
+        String sql = "UPDATE managers SET name = ?, email = ?, created_time = ?, updated_time = ? where manager_id = ?";
         jdbcTemplate.update(sql, manager.getName(), manager.getEmail(), manager.getCreatedTime(), manager.getUpdatedTime(), manager.getId());
     }
 
