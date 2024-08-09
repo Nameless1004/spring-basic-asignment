@@ -2,6 +2,7 @@ package com.sparta.springasignment.service;
 
 import com.sparta.springasignment.dto.ManagerRequestDto;
 import com.sparta.springasignment.dto.ManagerResponseDto;
+import com.sparta.springasignment.dto.ManagerUpdateRequestDto;
 import com.sparta.springasignment.entity.Manager;
 import com.sparta.springasignment.repository.ManagerRepository;
 import com.sparta.springasignment.repository.ScheduleRepository;
@@ -19,6 +20,7 @@ public class ManagerService {
 
     private final ManagerRepository repository;
 
+    // DB 저장
     public ManagerResponseDto save(ManagerRequestDto managerDto) {
         Manager manager = new Manager();
         manager.setName(managerDto.getName());
@@ -33,15 +35,22 @@ public class ManagerService {
         return responseManagerDto;
     }
 
-    public void updateManager(Long managerId){
-        Optional<Manager> managerById = repository.findManagerById(managerId);
+    // 업데이트
+    public ManagerResponseDto updateManager(Long id, ManagerUpdateRequestDto managerUpdateDto){
+        Optional<Manager> managerById = repository.findManagerById(id);
         if(managerById.isPresent()){
             Manager manager = managerById.get();
-            //         manager.
+            manager.setUpdatedTime(LocalDateTime.now());
+            manager.setName(managerUpdateDto.getName());
+            manager.setEmail(managerUpdateDto.getEmail());
+            repository.update(manager);
+            return new ManagerResponseDto(manager.getId(), manager.getName(), manager.getEmail(), manager.getCreatedTime(), manager.getUpdatedTime());
+        } else {
+            throw new IllegalArgumentException("존재하지 않는 id입니다.");
         }
-        // empty()처리
     }
 
+    // 삭제
     public ManagerResponseDto delete(Long managerId){
         Optional<Manager> find = repository.findManagerById(managerId);
         if(find.isPresent()){
@@ -54,6 +63,7 @@ public class ManagerService {
         }
     }
 
+    // 다 건 조회
     public List<ManagerResponseDto> findAllManagers() {
         List<Manager> allManager = repository.findAllManagers();
         return allManager.stream()
@@ -64,6 +74,7 @@ public class ManagerService {
     }
 
 
+    // 단 건 조회
     public ManagerResponseDto findManagerById(Long id) {
         Optional<Manager> managerById = repository.findManagerById(id);
         if(managerById.isPresent()) {

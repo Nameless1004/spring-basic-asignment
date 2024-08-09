@@ -2,6 +2,7 @@ package com.sparta.springasignment.controller;
 
 import com.sparta.springasignment.dto.ManagerRequestDto;
 import com.sparta.springasignment.dto.ManagerResponseDto;
+import com.sparta.springasignment.dto.ManagerUpdateRequestDto;
 import com.sparta.springasignment.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,12 @@ public class ManagerController {
     public ManagerResponseDto postManager(@RequestBody ManagerRequestDto dto){
         ManagerResponseDto save = service.save(dto);
         return save;
+    }
+
+    @GetMapping("/managers/{id}")
+    @ResponseBody
+    public ManagerResponseDto updateManager(@PathVariable Long id, @RequestBody ManagerUpdateRequestDto dto){
+        return service.updateManager(id, dto);
     }
 
     @DeleteMapping("/managers/{id}")
