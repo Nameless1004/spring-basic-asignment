@@ -13,10 +13,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalLong;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -46,24 +43,6 @@ public class ScheduleRepository {
         return keyHolder.getKey().longValue();
     }
 
-    public Long save(Manager manager){
-        if(manager.getId() == null) {
-            String sql = "INSERT INTO managers (name, email, created_time, updated_time) VALUES(?,?,?,?)";
-            jdbcTemplate.update(con -> {
-                PreparedStatement preparedStatement = con.prepareStatement(sql,
-                        Statement.RETURN_GENERATED_KEYS);
-                preparedStatement.setString(1, manager.getName());
-                preparedStatement.setString(2, manager.getEmail());
-                preparedStatement.setTimestamp(3, Timestamp.valueOf(manager.getCreatedTime()));
-                preparedStatement.setTimestamp(4, Timestamp.valueOf(manager.getUpdatedTime()));
-                return preparedStatement;
-            }, keyHolder);
-        } else {
-            String sql = "UPDATE schedules SET name = ?, email = ?, create_time = ?, updated_time = ?";
-            jdbcTemplate.update(sql, manager.getName(), manager.getEmail(), manager.getCreatedTime(), manager.getUpdatedTime());
-        }
-        return keyHolder.getKey().longValue();
-    }
 
     public Optional<Schedule> findScheduleById(Long scheduleId){
         String sql = "SELECT * FROM schedules WHERE schedule_id = ?";
@@ -87,24 +66,27 @@ public class ScheduleRepository {
         }
     }
 
-    public Optional<Manager> findManagerById(Long id) {
-        String sql = "SELECT * FROM managers WHERE manager_id = ?";
-        try {
-            return jdbcTemplate.queryForObject(sql, new RowMapper<Optional<Manager>>() {
-                @Override
-                public Optional<Manager> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    Manager manager = new Manager(
-                            rs.getLong("manager_id"),
-                            rs.getString("name"),
-                            rs.getString("email"),
-                            rs.getTimestamp("created_time").toLocalDateTime(),
-                            rs.getTimestamp("updated_time").toLocalDateTime()
-                    );
-                    return Optional.of(manager);
-                }
-            }, id);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+    public List<Schedule> findAllSchedules(){
+        String sql = "SELECT * FROM schedules";
+        List<Schedule> schedules = jdbcTemplate.query(sql,new RowMapper<Schedule>() {
+            @Override
+            public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Schedule schedule = new Schedule();
+                schedule.setScheduleId(rs.getLong("schedule_id"));
+                schedule.setManagerId(rs.getLong("manager_id"));
+                schedule.setPassword(rs.getString("password"));
+                schedule.setContents(rs.getString("contents"));
+                schedule.setCreatedTime(rs.getTimestamp("created_time").toLocalDateTime());
+                schedule.setUpdatedTime(rs.getTimestamp("updated_time").toLocalDateTime());
+                return schedule;
+            }
+        } );
+
+        return schedules;
+    }
+
+    public void delete(Long scheduleId) {
+        String sql = "DELETE FROM managers WHERE manager_id = ?";
+        jdbcTemplate.update(sql, scheduleId);
     }
 }

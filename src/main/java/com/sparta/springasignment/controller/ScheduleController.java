@@ -1,22 +1,32 @@
 package com.sparta.springasignment.controller;
 
-import com.sparta.springasignment.ScheduleManagementService;
-import com.sparta.springasignment.dto.ManagerRequestDto;
-import com.sparta.springasignment.dto.ManagerResponseDto;
+import com.sparta.springasignment.service.ScheduleService;
 import com.sparta.springasignment.dto.ScheduleRequestDto;
 import com.sparta.springasignment.dto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ScheduleController {
 
-    private final ScheduleManagementService service;
+    private final ScheduleService service;
+
+    @GetMapping("/schedules")
+    @ResponseBody
+    public List<ScheduleResponseDto> getAllSchedule(){
+        return service.findAllSchedules();
+    }
+
+    @GetMapping("/schedules/{id}")
+    @ResponseBody
+    public ScheduleResponseDto getAllSchedule(@PathVariable Long id){
+        return service.findScheduleById(id);
+    }
 
     @PostMapping("/schedules")
     @ResponseBody
@@ -25,17 +35,9 @@ public class ScheduleController {
         return save;
     }
 
-
-    @PostMapping("/managers")
-    @ResponseBody
-    public ManagerResponseDto postManager(@RequestBody ManagerRequestDto dto){
-        ManagerResponseDto save = service.save(dto);
-        return save;
+    @DeleteMapping("/schedules/{id}")
+    public void deleteSchedule(@PathVariable Long id, @RequestParam String password){
+        service.delete(id, password);
     }
 
-    @GetMapping("/managers/{id}")
-    @ResponseBody
-    public ManagerResponseDto getManager(@PathVariable Long id){
-        return service.findManagerById(id);
-    }
 }
