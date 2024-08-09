@@ -2,13 +2,12 @@ package com.sparta.springasignment.controller;
 
 import com.sparta.springasignment.ScheduleManagementService;
 import com.sparta.springasignment.dto.ManagerRequestDto;
+import com.sparta.springasignment.dto.ManagerResponseDto;
 import com.sparta.springasignment.dto.ScheduleRequestDto;
+import com.sparta.springasignment.dto.ScheduleResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -19,18 +18,24 @@ public class ScheduleController {
 
     private final ScheduleManagementService service;
 
-    @PostMapping("/schedule")
+    @PostMapping("/schedules")
     @ResponseBody
-    public String postingSchedule(){
-        return "";
+    public ScheduleResponseDto postSchedule(@RequestBody ScheduleRequestDto dto){
+        ScheduleResponseDto save = service.save(dto);
+        return save;
     }
 
-    @GetMapping("/test")
+
+    @PostMapping("/managers")
     @ResponseBody
-    public String test(){
-        service.save(new ManagerRequestDto("testname", "daf@namver.com", LocalDateTime.now(),LocalDateTime.now()));
-        service.save(new ScheduleRequestDto(1L, "123","123", LocalDateTime.now(),LocalDateTime.now()));
-        //var result = service.findById(2L);
-        return "";
+    public ManagerResponseDto postManager(@RequestBody ManagerRequestDto dto){
+        ManagerResponseDto save = service.save(dto);
+        return save;
+    }
+
+    @GetMapping("/managers/{id}")
+    @ResponseBody
+    public ManagerResponseDto getManager(@PathVariable Long id){
+        return service.findManagerById(id);
     }
 }
