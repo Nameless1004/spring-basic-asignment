@@ -101,6 +101,9 @@ public class ScheduleService {
         Optional<Schedule> find = repository.findScheduleById(id);
         if (find.isPresent()) {
             Schedule deleted = find.get();
+            if(!deleted.getPassword().equals(password)){
+                throw new IllegalArgumentException("password가 일치하지 않습니다.");
+            }
             repository.delete(id);
             ScheduleResponseDto deletedManager = new ScheduleResponseDto(deleted.getScheduleId(), deleted.getManagerId(), deleted.getPassword(), deleted.getContents(), deleted.getCreatedTime(), deleted.getUpdatedTime());
             return deletedManager;

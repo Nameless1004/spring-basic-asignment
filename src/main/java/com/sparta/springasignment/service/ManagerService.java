@@ -5,10 +5,11 @@ import com.sparta.springasignment.dto.ManagerResponseDto;
 import com.sparta.springasignment.dto.ManagerUpdateRequestDto;
 import com.sparta.springasignment.entity.Manager;
 import com.sparta.springasignment.repository.ManagerRepository;
-import com.sparta.springasignment.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ManagerService {
     }
 
     // 업데이트
-    public ManagerResponseDto updateManager(Long id, ManagerUpdateRequestDto managerUpdateDto){
+    public ManagerResponseDto updateManager(Long id, ManagerUpdateRequestDto managerUpdateDto) {
         Optional<Manager> managerById = repository.findManagerById(id);
         if(managerById.isPresent()){
             Manager manager = managerById.get();
@@ -84,5 +85,10 @@ public class ManagerService {
         } else{
             throw new IllegalArgumentException("존재하지 않는 아이디입니다.");
         }
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<String> handle(Exception e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

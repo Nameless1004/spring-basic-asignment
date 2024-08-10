@@ -1,19 +1,17 @@
 package com.sparta.springasignment.controller;
 
-import com.sparta.springasignment.dto.ScheduleUpdateRequestDto;
-import com.sparta.springasignment.service.ScheduleService;
 import com.sparta.springasignment.dto.ScheduleRequestDto;
 import com.sparta.springasignment.dto.ScheduleResponseDto;
+import com.sparta.springasignment.dto.ScheduleUpdateRequestDto;
+import com.sparta.springasignment.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class ScheduleController {
@@ -21,34 +19,31 @@ public class ScheduleController {
     private final ScheduleService service;
 
     @GetMapping("/schedules")
-    @ResponseBody
-    public List<ScheduleResponseDto> getAllSchedule(@RequestParam(defaultValue = "-1")Long id, @RequestParam(defaultValue = "") String updatedTime){
-        return service.findAllSchedules(updatedTime, id);
+    public ResponseEntity<List<ScheduleResponseDto>> getAllSchedule(@RequestParam(defaultValue = "-1")Long id, @RequestParam(defaultValue = "") String updatedTime){
+        return new ResponseEntity<>(service.findAllSchedules(updatedTime, id), HttpStatus.OK);
     }
 
     @GetMapping("/schedules/{id}")
-    @ResponseBody
-    public ScheduleResponseDto getSchedule(@PathVariable Long id){
-        return service.findScheduleById(id);
+    public ResponseEntity<ScheduleResponseDto> getSchedule(@PathVariable Long id){
+        return new ResponseEntity<>(service.findScheduleById(id), HttpStatus.OK);
     }
 
     @PostMapping("/schedules")
-    @ResponseBody
-    public ScheduleResponseDto postSchedule(@RequestBody ScheduleRequestDto dto){
+    public ResponseEntity<ScheduleResponseDto> postSchedule(@RequestBody ScheduleRequestDto dto){
         ScheduleResponseDto save = service.save(dto);
-        return save;
+        return new ResponseEntity<>(save, HttpStatus.CREATED);
     }
 
     @PutMapping("/schedules")
-    @ResponseBody
-    public ScheduleResponseDto putSchedule(@RequestBody ScheduleUpdateRequestDto dto){
+    public ResponseEntity<ScheduleResponseDto> putSchedule(@RequestBody ScheduleUpdateRequestDto dto){
         ScheduleResponseDto scheduleResponseDto = service.updateSchedule(dto);
-        return scheduleResponseDto;
+        return new ResponseEntity<>(scheduleResponseDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/schedules/{id}")
-    public void deleteSchedule(@PathVariable Long id, @RequestParam String password){
+    public ResponseEntity deleteSchedule(@PathVariable Long id, @RequestParam String password){
         service.delete(id, password);
+        return ResponseEntity.ok().build();
     }
 
 }
