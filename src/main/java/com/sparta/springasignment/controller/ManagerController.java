@@ -36,7 +36,8 @@ public class ManagerController {
 
     @PutMapping("/managers/{id}")
     public ResponseEntity<ManagerResponseDto> updateManager(@PathVariable Long id, @RequestBody ManagerUpdateRequestDto dto){
-        return new ResponseEntity<>(service.updateManager(id, dto),HttpStatus.OK);
+        ManagerResponseDto responseDto = service.updateManager(id, dto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/managers/{id}")
