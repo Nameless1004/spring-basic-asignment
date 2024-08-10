@@ -12,6 +12,4 @@ public class ScheduleRequestDto {
     private Long managerId;
     private String password;
     private String contents;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
 }

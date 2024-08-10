@@ -1,5 +1,6 @@
 package com.sparta.springasignment.service;
 
+import com.sparta.springasignment.common.exception.MissmatchPasswordException;
 import com.sparta.springasignment.dto.ScheduleRequestDto;
 import com.sparta.springasignment.dto.ScheduleResponseDto;
 import com.sparta.springasignment.dto.ScheduleUpdateRequestDto;
@@ -24,11 +25,14 @@ public class ScheduleService {
 
 
     // Update
-    public ScheduleResponseDto updateSchedule(ScheduleUpdateRequestDto updateRequestDto)
+    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto)
     {
-        Optional<Schedule> targetOp = repository.findScheduleById(updateRequestDto.getScheduleId());
+        Optional<Schedule> targetOp = repository.findScheduleById(scheduleId);
         if(targetOp.isPresent()){
             Schedule target = targetOp.get();
+            if(!target.getPassword().equals(updateRequestDto.getPassword())){
+                throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
+            }
             target.setUpdatedTime(LocalDateTime.now());
             target.setContents(updateRequestDto.getContents());
             target.setManagerId(updateRequestDto.getManagerId());
@@ -74,8 +78,8 @@ public class ScheduleService {
         schedule.setManagerId(scheduleRequestDto.getManagerId());
         schedule.setPassword(scheduleRequestDto.getPassword());
         schedule.setContents(scheduleRequestDto.getContents());
-        schedule.setCreatedTime(scheduleRequestDto.getCreatedTime());
-        schedule.setUpdatedTime(scheduleRequestDto.getUpdatedTime());
+        schedule.setCreatedTime(LocalDateTime.now());
+        schedule.setUpdatedTime(LocalDateTime.now());
 
         Long id = repository.save(schedule);
 
@@ -101,8 +105,8 @@ public class ScheduleService {
         Optional<Schedule> find = repository.findScheduleById(id);
         if (find.isPresent()) {
             Schedule deleted = find.get();
-            if(!deleted.getPassword().equals(password)){
-                throw new IllegalArgumentException("password가 일치하지 않습니다.");
+            if(!deleted.getPassword().equals(password)) {
+                throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
             }
             repository.delete(id);
             ScheduleResponseDto deletedManager = new ScheduleResponseDto(deleted.getScheduleId(), deleted.getManagerId(), deleted.getPassword(), deleted.getContents(), deleted.getCreatedTime(), deleted.getUpdatedTime());

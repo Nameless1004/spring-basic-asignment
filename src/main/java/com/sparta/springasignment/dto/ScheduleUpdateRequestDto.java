@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ScheduleUpdateRequestDto {
-    private Long scheduleId;
     private Long managerId;
     private String contents;
+    private String password;
 }
