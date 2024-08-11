@@ -1998,5 +1998,5 @@ insert into schedules (manager_id, password, contents, created_time, updated_tim
 insert into schedules (manager_id, password, contents, created_time, updated_time) values (998, 75450, 'Texas A&M International University', '2024-03-07 01:18:15', '2023-12-11 06:41:58');
 insert into schedules (manager_id, password, contents, created_time, updated_time) values (999, 99772, 'Qom University of Technology', '2024-05-22 04:50:08', '2023-12-25 11:02:34');
 insert into schedules (manager_id, password, contents, created_time, updated_time) values (1000, 6113, 'William Penn College', '2024-07-15 18:49:12', '2024-01-23 10:20:59');
-update schedules set created_time = updated_time
-update managers set created_time = updated_time
+update schedules set created_time = updated_time;
+update managers set created_time = updated_time;
