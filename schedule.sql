@@ -4,8 +4,8 @@
     `manager_id`   bigint       NOT NULL COMMENT '매니저코드',
     `password`     varchar(20)  NOT NULL COMMENT '비밀번호',
     `contents`     varchar(200) NOT NULL COMMENT '할일',
-    `created_time` varchar(100)  NOT NULL COMMENT '작성일',
-    `updated_time` varchar(100)  NOT NULL COMMENT '수정일'
+    `created_time` varchar(100)  NULL COMMENT '작성일',
+    `updated_time` varchar(100)  NULL COMMENT '수정일'
 );
 
 CREATE TABLE `managers`
