@@ -14,6 +14,7 @@ public class ScheduleRequestDto {
     @Positive
     private Long managerId;
     @NotBlank
+    @Size(min = 1, max = 20)
     private String password;
     @NotBlank
     @Size(min = 1, max = 200)

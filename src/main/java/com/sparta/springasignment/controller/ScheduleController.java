@@ -39,13 +39,13 @@ public class ScheduleController {
     }
 
     @PutMapping("/schedules/{id}")
-    public ResponseEntity<ScheduleResponseDto> putSchedule(@Positive @PathVariable Long id, @Size(min = 1, max = 30) @NotBlank @RequestParam String password, @Valid @RequestBody ScheduleUpdateRequestDto dto){
+    public ResponseEntity<ScheduleResponseDto> putSchedule(@Positive @PathVariable Long id, @Size(min = 1, max = 30) @NotBlank @RequestParam @Size(min = 1, max = 20) String password, @Valid @RequestBody ScheduleUpdateRequestDto dto){
         ScheduleResponseDto scheduleResponseDto = service.updateSchedule(id, dto, password);
         return new ResponseEntity<>(scheduleResponseDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/schedules/{id}")
-    public ResponseEntity deleteSchedule(@Positive @PathVariable Long id, @RequestParam @NotBlank  String password){
+    public ResponseEntity deleteSchedule(@Positive @PathVariable Long id, @RequestParam @NotBlank @Size(min = 1, max = 20) String password){
         service.delete(id, password);
         return ResponseEntity.ok().build();
     }
