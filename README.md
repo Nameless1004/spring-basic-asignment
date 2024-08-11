@@ -16,8 +16,9 @@
 | 매니저 정보 수정 | PUT    | /api/managers/{managerId}   | 요청 body  | 수정 정보    | 200:정상수정  |
 | 매니저 정보 삭제 | DELETE | /api/managers/{managerId}   | 요청 param | -        | 200:정상삭제  |
 
-[Manager api](https://documenter.getpostman.com/view/37553747/2sA3s3JBSW)
-[Schedule api](https://documenter.getpostman.com/view/37553747/2sA3s3JBSX)
+[매니저 API 명세서](https://documenter.getpostman.com/view/37553747/2sA3s3JBSW)
+
+[일정 API 명세서](https://documenter.getpostman.com/view/37553747/2sA3s3JBSX)
 
 ## ERD
 ![](./images/erd.png)
