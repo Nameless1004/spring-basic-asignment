@@ -22,8 +22,11 @@ public class ScheduleRepositorySQL {
     }
 
     public String findByPage(){
-        return "SELECT * FROM schedules LIMIT ? OFFSET ?";
+        String query = "select * from schedules as s join (select schedule_id from schedules limit ? offset ?) as t on s.schedule_id = t.schedule_id";
+        return query;
     }
+
+
 
     public String delete(){
         return "DELETE FROM schedules WHERE schedule_id = ?";
