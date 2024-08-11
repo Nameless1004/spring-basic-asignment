@@ -82,7 +82,7 @@ public class ScheduleService {
             sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updatedTime);
         } else if (updatedTime == null && managerId != null) {
             sql += " where manager_id = " + managerId;
-        } else if (updatedTime == null && managerId != null) {
+        } else if (updatedTime != null && managerId != null) {
             sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updatedTime) + " and manager_id = " + managerId;
         }
 

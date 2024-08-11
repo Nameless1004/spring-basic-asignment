@@ -28,9 +28,9 @@ public class ManagerController {
         return new ResponseEntity<>(service.findAllManagers(), HttpStatus.OK);
     }
 
-    @GetMapping("/managers/{id}")
-    public ResponseEntity<ManagerResponseDto> getManager(@Positive @PathVariable Long id){
-        return new ResponseEntity<>(service.findManagerById(id), HttpStatus.OK);
+    @GetMapping("/managers/{managerId}")
+    public ResponseEntity<ManagerResponseDto> getManager(@Positive @PathVariable Long managerId){
+        return new ResponseEntity<>(service.findManagerById(managerId), HttpStatus.OK);
     }
 
     @PostMapping("/managers")
@@ -39,15 +39,15 @@ public class ManagerController {
         return new ResponseEntity<>(save, HttpStatus.CREATED);
     }
 
-    @PutMapping("/managers/{id}")
-    public ResponseEntity<ManagerResponseDto> updateManager(@Positive @PathVariable Long id, @Valid @RequestBody ManagerUpdateRequestDto dto){
-        ManagerResponseDto responseDto = service.updateManager(id, dto);
+    @PutMapping("/managers/{managerId}")
+    public ResponseEntity<ManagerResponseDto> updateManager(@Positive @PathVariable Long managerId, @Valid @RequestBody ManagerUpdateRequestDto dto){
+        ManagerResponseDto responseDto = service.updateManager(managerId, dto);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
-    @DeleteMapping("/managers/{id}")
-    public ResponseEntity deleteManager(@Positive @PathVariable Long id){
-        service.delete(id);
+    @DeleteMapping("/managers/{managerId}")
+    public ResponseEntity deleteManager(@Positive @PathVariable Long managerId){
+        service.delete(managerId);
         return ResponseEntity.ok().build();
     }
 
