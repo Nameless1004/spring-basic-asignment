@@ -1,13 +1,11 @@
 package com.sparta.springasignment.service;
 
-import com.sparta.springasignment.common.utils.Validator;
-import com.sparta.springasignment.dto.ManagerRequestDto;
-import com.sparta.springasignment.dto.ManagerResponseDto;
-import com.sparta.springasignment.dto.ManagerUpdateRequestDto;
+import com.sparta.springasignment.dto.request.ManagerRequestDto;
+import com.sparta.springasignment.dto.response.ManagerResponseDto;
+import com.sparta.springasignment.dto.request.ManagerUpdateRequestDto;
 import com.sparta.springasignment.entity.Manager;
 import com.sparta.springasignment.repository.ManagerRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -43,11 +41,6 @@ public class ManagerService {
         Optional<Manager> managerById = repository.findManagerById(id);
         if(managerById.isPresent()){
             Manager manager = managerById.get();
-
-            // 이메일 유효성 검사
-            if(Validator.isValidEmailAddress(managerUpdateDto.getEmail())){
-                throw new IllegalArgumentException("유효하지 않은 이메일 형식 입니다.");
-            }
 
             manager.setUpdatedTime(LocalDateTime.now());
             manager.setName(managerUpdateDto.getName());

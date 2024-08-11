@@ -50,15 +50,15 @@ ALTER TABLE schedules MODIFY schedule_id bigint not null auto_increment;
 ALTER TABLE schedules add constraint schedule_fk_manager_id foreign key (manager_id) references managers (manager_id) on delete cascade
 ```
 ## 구현 리스트
--[ ] 일정 작성
--[ ] 선택한 일정 조회
--[ ] 일정 목록 조회
--[ ] 선택한 일정 수정
--[ ] 선택한 일정 삭제
-- [ ] 연관 관계 설정
-- [ ] 페이지네이션
-- [ ] 예외 발생 처리
-- [ ] `null 체크` 및 `특정 패턴`에 대한 검증 수행
+-[X] 일정 작성
+-[X] 선택한 일정 조회
+-[X] 일정 목록 조회
+-[X] 선택한 일정 수정
+-[X] 선택한 일정 삭제
+- [X] 연관 관계 설정
+- [X] 페이지네이션
+- [X] 예외 발생 처리
+- [X] `null 체크` 및 `특정 패턴`에 대한 검증 수행
 
 <details>
 <summary>구현 세부 사항</summary>

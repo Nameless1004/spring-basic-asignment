@@ -1,9 +1,9 @@
 package com.sparta.springasignment.service;
 
 import com.sparta.springasignment.common.exception.MissmatchPasswordException;
-import com.sparta.springasignment.dto.ScheduleRequestDto;
-import com.sparta.springasignment.dto.ScheduleResponseDto;
-import com.sparta.springasignment.dto.ScheduleUpdateRequestDto;
+import com.sparta.springasignment.dto.request.ScheduleRequestDto;
+import com.sparta.springasignment.dto.response.ScheduleResponseDto;
+import com.sparta.springasignment.dto.request.ScheduleUpdateRequestDto;
 import com.sparta.springasignment.entity.Schedule;
 import com.sparta.springasignment.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,17 +46,11 @@ public class ScheduleService {
     public List<ScheduleResponseDto> findAllSchedules(String updatedTime, Long managerId) {
         String sql = "select * from schedules";
 
-        // 날짜 포맷 맞는지 확인
-        String dateRegex ="^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
-        if(!Pattern.matches(dateRegex, updatedTime)){
-            throw new IllegalArgumentException("입력하신 날짜 포맷이 일치하지 않습니다. YYYY-MM-DD로 다시 입력해주세요.");
-        }
-
-        if (!updatedTime.isEmpty() && managerId == -1) {
+        if (updatedTime != null && managerId == null) {
             sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updatedTime);
-        } else if (updatedTime.isEmpty() && managerId != -1) {
+        } else if (updatedTime == null && managerId != null) {
             sql += " where manager_id = " + managerId;
-        } else if (!updatedTime.isEmpty() && managerId != -1) {
+        } else if (updatedTime == null && managerId != null) {
             sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updatedTime) + " and manager_id = " + managerId;
         }
 
@@ -115,10 +109,6 @@ public class ScheduleService {
     }
 
     public List<ScheduleResponseDto> findSchedulsByPage(Integer pageNum, Integer pageSize) {
-        if (pageSize < 0 || pageNum < 1) {
-            return new ArrayList<>();
-        }
-
         List<Schedule> schedulesByPage = repository.findSchedulesByPage(pageNum, pageSize);
         List<ScheduleResponseDto> list = schedulesByPage.stream().map(x -> {
             ScheduleResponseDto dto = new ScheduleResponseDto(x.getScheduleId(), x.getManagerId(), x.getPassword(), x.getContents(), x.getCreatedTime(), x.getUpdatedTime());

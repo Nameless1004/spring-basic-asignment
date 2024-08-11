@@ -1,11 +1,10 @@
-package com.sparta.springasignment.dto;
+package com.sparta.springasignment.dto.response;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @AllArgsConstructor
 @Getter
