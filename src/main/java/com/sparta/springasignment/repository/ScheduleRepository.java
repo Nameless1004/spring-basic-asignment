@@ -21,12 +21,13 @@ import java.util.*;
 public class ScheduleRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ScheduleRepositorySQL sql;
+
     private final KeyHolder keyHolder = new GeneratedKeyHolder();
 
     public Long save(Schedule schedule) {
-        String sql = "INSERT INTO schedules (manager_id, password, contents, created_time, updated_time) VALUES(?,?,?,?,?)";
         jdbcTemplate.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = con.prepareStatement(sql.save(), Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setLong(1, schedule.getManagerId());
             preparedStatement.setString(2, schedule.getPassword());
             preparedStatement.setString(3, schedule.getContents());
@@ -38,15 +39,13 @@ public class ScheduleRepository {
     }
 
     public void update(Schedule schedule) {
-        String sql = "UPDATE schedules SET manager_id = ?, password = ?, contents = ?, created_time = ?, updated_time = ? where schedule_id = ?";
-        jdbcTemplate.update(sql, schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime(), schedule.getScheduleId());
+        jdbcTemplate.update(sql.update(), schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime(), schedule.getScheduleId());
     }
 
 
     public Optional<Schedule> findScheduleById(Long scheduleId) {
-        String sql = "SELECT * FROM schedules WHERE schedule_id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new RowMapper<Optional<Schedule>>() {
+            return jdbcTemplate.queryForObject(sql.findById(), new RowMapper<Optional<Schedule>>() {
                 @Override
                 public Optional<Schedule> mapRow(ResultSet rs, int rowNum) throws SQLException {
                     Schedule schedule = new Schedule(rs.getLong("schedule_id"), rs.getLong("manager_id"), rs.getString("password"), rs.getString("contents"), rs.getTimestamp("created_time").toLocalDateTime(), rs.getTimestamp("updated_time").toLocalDateTime());
@@ -81,10 +80,8 @@ public class ScheduleRepository {
     }
 
     public List<Schedule> findAllSchedules() {
-        String sql = "SELECT * FROM schedules";
-
         try {
-            List<Schedule> schedules = jdbcTemplate.query(sql, new RowMapper<Schedule>() {
+            List<Schedule> schedules = jdbcTemplate.query(sql.findAll(), new RowMapper<Schedule>() {
                 @Override
                 public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
                     Schedule schedule = new Schedule();
@@ -105,11 +102,10 @@ public class ScheduleRepository {
     }
 
     public List<Schedule> findSchedulesByPage(Integer page, Integer size) {
-        String sql = "SELECT * FROM schedules LIMIT ? OFFSET ?";
         int limit = size;
         int offset = (page - 1) * size;
 
-        List<Schedule> schedules = jdbcTemplate.query(sql, new RowMapper<Schedule>() {
+        List<Schedule> schedules = jdbcTemplate.query(sql.findByPage(), new RowMapper<Schedule>() {
             @Override
             public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Schedule schedule = new Schedule();
@@ -127,7 +123,6 @@ public class ScheduleRepository {
     }
 
     public void delete(Long scheduleId) {
-        String sql = "DELETE FROM managers WHERE manager_id = ?";
-        jdbcTemplate.update(sql, scheduleId);
+        jdbcTemplate.update(sql.delete(), scheduleId);
     }
 }

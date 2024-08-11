@@ -18,13 +18,13 @@ import java.util.Optional;
 public class ManagerRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ManagerRepositorySQL sql;
     private final KeyHolder keyHolder = new GeneratedKeyHolder();
 
     public Long save(Manager manager) {
         if (manager.getId() == null) {
-            String sql = "INSERT INTO managers (name, email, created_time, updated_time) VALUES(?,?,?,?)";
             jdbcTemplate.update(con -> {
-                PreparedStatement preparedStatement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement preparedStatement = con.prepareStatement(sql.save(), Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setString(1, manager.getName());
                 preparedStatement.setString(2, manager.getEmail());
                 preparedStatement.setTimestamp(3, Timestamp.valueOf(manager.getCreatedTime()));
@@ -36,14 +36,12 @@ public class ManagerRepository {
     }
 
     public void update(Manager manager) {
-        String sql = "UPDATE managers SET name = ?, email = ?, created_time = ?, updated_time = ? where manager_id = ?";
-        jdbcTemplate.update(sql, manager.getName(), manager.getEmail(), manager.getCreatedTime(), manager.getUpdatedTime(), manager.getId());
+        jdbcTemplate.update(sql.update(), manager.getName(), manager.getEmail(), manager.getCreatedTime(), manager.getUpdatedTime(), manager.getId());
     }
 
     public Optional<Manager> findManagerById(Long id) {
-        String sql = "SELECT * FROM managers WHERE manager_id = ?";
         try {
-            return jdbcTemplate.queryForObject(sql, new RowMapper<Optional<Manager>>() {
+            return jdbcTemplate.queryForObject(sql.findById(), new RowMapper<Optional<Manager>>() {
                 @Override
                 public Optional<Manager> mapRow(ResultSet rs, int rowNum) throws SQLException {
                     Manager manager = new Manager(rs.getLong("manager_id"), rs.getString("name"), rs.getString("email"), rs.getTimestamp("created_time").toLocalDateTime(), rs.getTimestamp("updated_time").toLocalDateTime());
@@ -56,8 +54,7 @@ public class ManagerRepository {
     }
 
     public List<Manager> findAllManagers() {
-        String sql = "SELECT * FROM managers";
-        List<Manager> managers = jdbcTemplate.query(sql, new RowMapper<Manager>() {
+        List<Manager> managers = jdbcTemplate.query(sql.findAll(), new RowMapper<Manager>() {
             @Override
             public Manager mapRow(ResultSet rs, int rowNum) throws SQLException {
                 Manager manager = new Manager();
@@ -75,7 +72,6 @@ public class ManagerRepository {
     }
 
     public void delete(Long managerId) {
-        String sql = "DELETE FROM managers WHERE manager_id = ?";
-        jdbcTemplate.update(sql, managerId);
+        jdbcTemplate.update(sql.delete(), managerId);
     }
 }
