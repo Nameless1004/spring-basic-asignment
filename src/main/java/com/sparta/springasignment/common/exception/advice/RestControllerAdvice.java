@@ -2,6 +2,7 @@ package com.sparta.springasignment.common.exception.advice;
 
 
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.Map;
 @org.springframework.web.bind.annotation.RestControllerAdvice
 public class RestControllerAdvice {
 
-    @ExceptionHandler({IllegalArgumentException.class, EmptyResultDataAccessException.class})
+    @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }

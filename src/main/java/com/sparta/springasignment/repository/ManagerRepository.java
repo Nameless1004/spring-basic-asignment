@@ -1,15 +1,18 @@
 package com.sparta.springasignment.repository;
 
 import com.sparta.springasignment.entity.Manager;
+import com.sparta.springasignment.repository.rowmapper.ManagerRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +22,8 @@ public class ManagerRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final ManagerRepositorySQL sql;
+    private final ManagerRowMapper managerRowMapper;
+
     private final KeyHolder keyHolder = new GeneratedKeyHolder();
 
     public Long save(Manager manager) {
@@ -41,37 +46,23 @@ public class ManagerRepository {
 
     public Optional<Manager> findManagerById(Long id) {
         try {
-            return jdbcTemplate.queryForObject(sql.findById(), new RowMapper<Optional<Manager>>() {
-                @Override
-                public Optional<Manager> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    Manager manager = new Manager(rs.getLong("manager_id"), rs.getString("name"), rs.getString("email"), rs.getTimestamp("created_time").toLocalDateTime(), rs.getTimestamp("updated_time").toLocalDateTime());
-                    return Optional.of(manager);
-                }
-            }, id);
-        } catch (EmptyResultDataAccessException e) {
+            Manager manager = jdbcTemplate.queryForObject(sql.findById(), managerRowMapper, id);
+            return Optional.ofNullable(manager);
+        } catch (DataAccessException e) {
             return Optional.empty();
         }
     }
 
     public List<Manager> findAllManagers() {
-        List<Manager> managers = jdbcTemplate.query(sql.findAll(), new RowMapper<Manager>() {
-            @Override
-            public Manager mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Manager manager = new Manager();
-                manager.setId(rs.getLong("manager_id"));
-                manager.setName(rs.getString("name"));
-                manager.setEmail(rs.getString("email"));
-                manager.setCreatedTime(rs.getTimestamp("created_time").toLocalDateTime());
-                manager.setUpdatedTime(rs.getTimestamp("updated_time").toLocalDateTime());
-
-                return manager;
-            }
-        });
-
-        return managers;
+        try {
+            List<Manager> managers = jdbcTemplate.query(sql.findAll(), managerRowMapper);
+            return managers;
+        } catch (DataAccessException e) {
+            return new ArrayList<>();
+        }
     }
 
-    public void delete(Long managerId) {
-        jdbcTemplate.update(sql.delete(), managerId);
+    public void delete(Manager manager) {
+        jdbcTemplate.update(sql.delete(), manager.getId());
     }
 }

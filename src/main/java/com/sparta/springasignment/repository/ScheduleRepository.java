@@ -1,20 +1,18 @@
 package com.sparta.springasignment.repository;
 
-import com.sparta.springasignment.entity.Manager;
 import com.sparta.springasignment.entity.Schedule;
+import com.sparta.springasignment.repository.rowmapper.ScheduleRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,6 +20,7 @@ public class ScheduleRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final ScheduleRepositorySQL sql;
+    private final ScheduleRowMapper rowMapper;
 
     private final KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -45,84 +44,45 @@ public class ScheduleRepository {
 
     public Optional<Schedule> findScheduleById(Long scheduleId) {
         try {
-            return jdbcTemplate.queryForObject(sql.findById(), new RowMapper<Optional<Schedule>>() {
-                @Override
-                public Optional<Schedule> mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    Schedule schedule = new Schedule(rs.getLong("schedule_id"), rs.getLong("manager_id"), rs.getString("password"), rs.getString("contents"), rs.getTimestamp("created_time").toLocalDateTime(), rs.getTimestamp("updated_time").toLocalDateTime());
-                    return Optional.of(schedule);
-                }
-            }, scheduleId);
-        } catch (EmptyResultDataAccessException e) {
+            Schedule schedule = jdbcTemplate.queryForObject(sql.findById(), rowMapper, scheduleId);
+            return Optional.ofNullable(schedule);
+        } catch (DataAccessException e) {
             return Optional.empty();
         }
     }
 
     public List<Schedule> findAllSchedulesByQuery(String query) {
-        try {
-            List<Schedule> schedules = jdbcTemplate.query(query, new RowMapper<Schedule>() {
-                @Override
-                public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    Schedule schedule = new Schedule();
-                    schedule.setScheduleId(rs.getLong("schedule_id"));
-                    schedule.setManagerId(rs.getLong("manager_id"));
-                    schedule.setPassword(rs.getString("password"));
-                    schedule.setContents(rs.getString("contents"));
-                    schedule.setCreatedTime(rs.getTimestamp("created_time").toLocalDateTime());
-                    schedule.setUpdatedTime(rs.getTimestamp("updated_time").toLocalDateTime());
-                    return schedule;
-                }
-            });
-            return schedules;
-
-        } catch (DataAccessException e) {
+        try{
+        List<Schedule> schedules = jdbcTemplate.query(query, rowMapper);
+        return schedules;
+        } catch(DataAccessException e){
             return new ArrayList<>();
         }
     }
 
     public List<Schedule> findAllSchedules() {
         try {
-            List<Schedule> schedules = jdbcTemplate.query(sql.findAll(), new RowMapper<Schedule>() {
-                @Override
-                public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    Schedule schedule = new Schedule();
-                    schedule.setScheduleId(rs.getLong("schedule_id"));
-                    schedule.setManagerId(rs.getLong("manager_id"));
-                    schedule.setPassword(rs.getString("password"));
-                    schedule.setContents(rs.getString("contents"));
-                    schedule.setCreatedTime(rs.getTimestamp("created_time").toLocalDateTime());
-                    schedule.setUpdatedTime(rs.getTimestamp("updated_time").toLocalDateTime());
-                    return schedule;
-                }
-            });
+            List<Schedule> schedules = jdbcTemplate.query(sql.findAll(), rowMapper);
             return schedules;
-
         } catch (DataAccessException e) {
             return new ArrayList<>();
         }
     }
 
     public List<Schedule> findSchedulesByPage(Integer page, Integer size) {
-        int limit = size;
-        int offset = (page - 1) * size;
+        try {
+            int limit = size;
+            int offset = (page - 1) * size;
 
-        List<Schedule> schedules = jdbcTemplate.query(sql.findByPage(), new RowMapper<Schedule>() {
-            @Override
-            public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
-                Schedule schedule = new Schedule();
-                schedule.setScheduleId(rs.getLong("schedule_id"));
-                schedule.setManagerId(rs.getLong("manager_id"));
-                schedule.setPassword(rs.getString("password"));
-                schedule.setContents(rs.getString("contents"));
-                schedule.setCreatedTime(rs.getTimestamp("created_time").toLocalDateTime());
-                schedule.setUpdatedTime(rs.getTimestamp("updated_time").toLocalDateTime());
-                return schedule;
-            }
-        },limit, offset);
+            List<Schedule> schedules = jdbcTemplate.query(sql.findByPage(), rowMapper, limit, offset);
 
-        return schedules;
+            return schedules;
+        } catch (DataAccessException e){
+            return new ArrayList<>();
+        }
     }
 
-    public void delete(Long scheduleId) {
-        jdbcTemplate.update(sql.delete(), scheduleId);
+    public void delete(Schedule schedule) {
+        jdbcTemplate.update(sql.delete(), schedule.getScheduleId());
     }
 }

@@ -57,7 +57,7 @@ public class ManagerService {
         Optional<Manager> find = repository.findManagerById(managerId);
         if(find.isPresent()){
             Manager deleted = find.get();
-            repository.delete(managerId);
+            repository.delete(deleted);
             ManagerResponseDto deletedManager = new ManagerResponseDto(deleted.getId(), deleted.getName(), deleted.getEmail(), deleted.getCreatedTime(), deleted.getUpdatedTime());
             return deletedManager;
         } else {
@@ -65,7 +65,7 @@ public class ManagerService {
         }
     }
 
-    // 다 건 조회
+    // 다건 조회
     public List<ManagerResponseDto> findAllManagers() {
         List<Manager> allManager = repository.findAllManagers();
         return allManager.stream()
@@ -76,7 +76,7 @@ public class ManagerService {
     }
 
 
-    // 단 건 조회
+    // 단건 조회
     public ManagerResponseDto findManagerById(Long id) {
         Optional<Manager> managerById = repository.findManagerById(id);
         if(managerById.isPresent()) {

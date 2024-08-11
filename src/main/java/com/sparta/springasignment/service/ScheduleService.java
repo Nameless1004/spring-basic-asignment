@@ -22,12 +22,28 @@ public class ScheduleService {
 
     private final ScheduleRepository repository;
 
-    // Update
-    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto) {
+    // DB 저장
+    public ScheduleResponseDto save(ScheduleRequestDto scheduleRequestDto) {
+        Schedule schedule = new Schedule();
+        schedule.setManagerId(scheduleRequestDto.getManagerId());
+        schedule.setPassword(scheduleRequestDto.getPassword());
+        schedule.setContents(scheduleRequestDto.getContents());
+        schedule.setCreatedTime(LocalDateTime.now());
+        schedule.setUpdatedTime(LocalDateTime.now());
+
+        Long id = repository.save(schedule);
+
+        schedule.setScheduleId(id);
+        ScheduleResponseDto responseManagerDto = new ScheduleResponseDto(schedule.getScheduleId(), schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime());
+        return responseManagerDto;
+    }
+
+    // 업데이트
+    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto, String password) {
         Optional<Schedule> targetOp = repository.findScheduleById(scheduleId);
         if (targetOp.isPresent()) {
             Schedule target = targetOp.get();
-            if (!target.getPassword().equals(updateRequestDto.getPassword())) {
+            if (!target.getPassword().equals(password)) {
                 throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
             }
             target.setUpdatedTime(LocalDateTime.now());
@@ -42,7 +58,23 @@ public class ScheduleService {
         }
     }
 
-    // 다 건 조회
+    // 삭제
+    public ScheduleResponseDto delete(Long id, String password) {
+        Optional<Schedule> find = repository.findScheduleById(id);
+        if (find.isPresent()) {
+            Schedule deleted = find.get();
+            if (!deleted.getPassword().equals(password)) {
+                throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
+            }
+            repository.delete(deleted);
+            ScheduleResponseDto deletedSchedule = new ScheduleResponseDto(deleted.getScheduleId(), deleted.getManagerId(), deleted.getPassword(), deleted.getContents(), deleted.getCreatedTime(), deleted.getUpdatedTime());
+            return deletedSchedule;
+        } else {
+            throw new IllegalArgumentException("존재하지 않는 id 입니다.");
+        }
+    }
+
+    // 다건 조회
     public List<ScheduleResponseDto> findAllSchedules(String updatedTime, Long managerId) {
         String sql = "select * from schedules";
 
@@ -64,23 +96,7 @@ public class ScheduleService {
         return result;
     }
 
-    // DB 저장
-    public ScheduleResponseDto save(ScheduleRequestDto scheduleRequestDto) {
-        Schedule schedule = new Schedule();
-        schedule.setManagerId(scheduleRequestDto.getManagerId());
-        schedule.setPassword(scheduleRequestDto.getPassword());
-        schedule.setContents(scheduleRequestDto.getContents());
-        schedule.setCreatedTime(LocalDateTime.now());
-        schedule.setUpdatedTime(LocalDateTime.now());
-
-        Long id = repository.save(schedule);
-
-        schedule.setScheduleId(id);
-        ScheduleResponseDto responseManagerDto = new ScheduleResponseDto(schedule.getScheduleId(), schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime());
-        return responseManagerDto;
-    }
-
-    // 단 건 조회
+    // 단건 조회
     public ScheduleResponseDto findScheduleById(Long id) {
         Optional<Schedule> managerById = repository.findScheduleById(id);
         if (managerById.isPresent()) {
@@ -92,22 +108,7 @@ public class ScheduleService {
         }
     }
 
-    // 삭제
-    public ScheduleResponseDto delete(Long id, String password) {
-        Optional<Schedule> find = repository.findScheduleById(id);
-        if (find.isPresent()) {
-            Schedule deleted = find.get();
-            if (!deleted.getPassword().equals(password)) {
-                throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
-            }
-            repository.delete(id);
-            ScheduleResponseDto deletedManager = new ScheduleResponseDto(deleted.getScheduleId(), deleted.getManagerId(), deleted.getPassword(), deleted.getContents(), deleted.getCreatedTime(), deleted.getUpdatedTime());
-            return deletedManager;
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 id 입니다.");
-        }
-    }
-
+    // 페이지 조회
     public List<ScheduleResponseDto> findSchedulsByPage(Integer pageNum, Integer pageSize) {
         List<Schedule> schedulesByPage = repository.findSchedulesByPage(pageNum, pageSize);
         List<ScheduleResponseDto> list = schedulesByPage.stream().map(x -> {

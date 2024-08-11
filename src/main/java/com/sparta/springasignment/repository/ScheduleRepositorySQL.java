@@ -26,6 +26,6 @@ public class ScheduleRepositorySQL {
     }
 
     public String delete(){
-        return "DELETE FROM managers WHERE manager_id = ?";
+        return "DELETE FROM schedules WHERE schedule_id = ?";
     }
 }

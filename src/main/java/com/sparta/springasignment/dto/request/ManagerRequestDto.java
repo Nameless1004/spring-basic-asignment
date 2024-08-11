@@ -16,8 +16,4 @@ public class ManagerRequestDto {
     private String name;
     @Email
     private String email;
-    @Null
-    private LocalDateTime createdTime;
-    @Null
-    private LocalDateTime updatedTime;
 }
