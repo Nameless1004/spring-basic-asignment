@@ -9,13 +9,12 @@ import com.sparta.springasignment.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -23,14 +22,12 @@ public class ScheduleService {
 
     private final ScheduleRepository repository;
 
-
     // Update
-    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto)
-    {
+    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto) {
         Optional<Schedule> targetOp = repository.findScheduleById(scheduleId);
-        if(targetOp.isPresent()){
+        if (targetOp.isPresent()) {
             Schedule target = targetOp.get();
-            if(!target.getPassword().equals(updateRequestDto.getPassword())){
+            if (!target.getPassword().equals(updateRequestDto.getPassword())) {
                 throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
             }
             target.setUpdatedTime(LocalDateTime.now());
@@ -40,27 +37,28 @@ public class ScheduleService {
 
             ScheduleResponseDto ret = new ScheduleResponseDto(target.getScheduleId(), target.getManagerId(), target.getPassword(), target.getContents(), target.getCreatedTime(), target.getUpdatedTime());
             return ret;
-        } else{
+        } else {
             throw new IllegalArgumentException("존재하지 않는 id입니다.");
         }
     }
 
     // 다 건 조회
-    public List<ScheduleResponseDto> findAllSchedules(String updateTime, Long managerId) {
+    public List<ScheduleResponseDto> findAllSchedules(String updatedTime, Long managerId) {
         String sql = "select * from schedules";
 
-            try {
-                if (!updateTime.isEmpty() && managerId == -1) {
-                    sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updateTime);
-                } else if (updateTime.isEmpty() && managerId != -1) {
-                    sql += " where manager_id = " + managerId;
-                } else if(updateTime.isEmpty()==false && managerId != -1){
-                    sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updateTime) + " and manager_id = " + managerId;
-                }
-            } catch (IllegalArgumentException e) {
-                System.out.println("날짜 조건 형식에 맞지 않음(YYYY-MM-DD)");
-                return new ArrayList<>();
-            }
+        // 날짜 포맷 맞는지 확인
+        String dateRegex ="^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
+        if(!Pattern.matches(dateRegex, updatedTime)){
+            throw new IllegalArgumentException("입력하신 날짜 포맷이 일치하지 않습니다. YYYY-MM-DD로 다시 입력해주세요.");
+        }
+
+        if (!updatedTime.isEmpty() && managerId == -1) {
+            sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updatedTime);
+        } else if (updatedTime.isEmpty() && managerId != -1) {
+            sql += " where manager_id = " + managerId;
+        } else if (!updatedTime.isEmpty() && managerId != -1) {
+            sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updatedTime) + " and manager_id = " + managerId;
+        }
 
         sql += " order by updated_time desc";
 
@@ -105,7 +103,7 @@ public class ScheduleService {
         Optional<Schedule> find = repository.findScheduleById(id);
         if (find.isPresent()) {
             Schedule deleted = find.get();
-            if(!deleted.getPassword().equals(password)) {
+            if (!deleted.getPassword().equals(password)) {
                 throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
             }
             repository.delete(id);
@@ -114,5 +112,19 @@ public class ScheduleService {
         } else {
             throw new IllegalArgumentException("존재하지 않는 id 입니다.");
         }
+    }
+
+    public List<ScheduleResponseDto> findSchedulsByPage(Integer pageNum, Integer pageSize) {
+        if (pageSize < 0 || pageNum < 1) {
+            return new ArrayList<>();
+        }
+
+        List<Schedule> schedulesByPage = repository.findSchedulesByPage(pageNum, pageSize);
+        List<ScheduleResponseDto> list = schedulesByPage.stream().map(x -> {
+            ScheduleResponseDto dto = new ScheduleResponseDto(x.getScheduleId(), x.getManagerId(), x.getPassword(), x.getContents(), x.getCreatedTime(), x.getUpdatedTime());
+            return dto;
+        }).toList();
+
+        return list;
     }
 }

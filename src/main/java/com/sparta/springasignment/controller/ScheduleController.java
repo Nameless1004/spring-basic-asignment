@@ -46,4 +46,12 @@ public class ScheduleController {
         return ResponseEntity.ok().build();
     }
 
+    // page
+    @GetMapping("/schedules/")
+    public ResponseEntity<List<ScheduleResponseDto>> getAllSchedulesByPage(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size){
+        List<ScheduleResponseDto> schedulsByPage = service.findSchedulsByPage(page, size);
+        ResponseEntity<List<ScheduleResponseDto>> response = new ResponseEntity<>(schedulsByPage, HttpStatus.OK);
+        return response;
+    }
+
 }

@@ -104,6 +104,28 @@ public class ScheduleRepository {
         }
     }
 
+    public List<Schedule> findSchedulesByPage(Integer page, Integer size) {
+        String sql = "SELECT * FROM schedules LIMIT ? OFFSET ?";
+        int limit = size;
+        int offset = (page - 1) * size;
+
+        List<Schedule> schedules = jdbcTemplate.query(sql, new RowMapper<Schedule>() {
+            @Override
+            public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Schedule schedule = new Schedule();
+                schedule.setScheduleId(rs.getLong("schedule_id"));
+                schedule.setManagerId(rs.getLong("manager_id"));
+                schedule.setPassword(rs.getString("password"));
+                schedule.setContents(rs.getString("contents"));
+                schedule.setCreatedTime(rs.getTimestamp("created_time").toLocalDateTime());
+                schedule.setUpdatedTime(rs.getTimestamp("updated_time").toLocalDateTime());
+                return schedule;
+            }
+        },limit, offset);
+
+        return schedules;
+    }
+
     public void delete(Long scheduleId) {
         String sql = "DELETE FROM managers WHERE manager_id = ?";
         jdbcTemplate.update(sql, scheduleId);
