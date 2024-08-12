@@ -4,7 +4,6 @@ import com.sparta.springasignment.common.exception.MissmatchPasswordException;
 import com.sparta.springasignment.schedule.dto.ScheduleDeleteDto;
 import com.sparta.springasignment.schedule.dto.ScheduleRequestDto;
 import com.sparta.springasignment.schedule.dto.ScheduleResponseDto;
-import com.sparta.springasignment.schedule.dto.ScheduleUpdateRequestDto;
 import com.sparta.springasignment.schedule.entity.Schedule;
 import com.sparta.springasignment.schedule.repository.ScheduleRepository;
 import java.time.LocalDateTime;
@@ -38,7 +37,7 @@ public class ScheduleService {
 
   // 업데이트
   public ScheduleResponseDto updateSchedule(Long scheduleId,
-      ScheduleUpdateRequestDto updateRequestDto) {
+      ScheduleRequestDto updateRequestDto) {
 
     Schedule target = repository.findById(scheduleId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));

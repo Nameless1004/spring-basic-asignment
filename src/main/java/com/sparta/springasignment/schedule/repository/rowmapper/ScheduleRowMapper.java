@@ -10,14 +10,13 @@ import org.springframework.stereotype.Component;
 public class ScheduleRowMapper implements RowMapper<Schedule> {
     @Override
     public Schedule mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Schedule schedule = new Schedule();
-        schedule.setScheduleId(rs.getLong("schedule_id"));
-        schedule.setManagerId(rs.getLong("manager_id"));
-        schedule.setPassword(rs.getString("password"));
-        schedule.setContents(rs.getString("contents"));
-        schedule.setCreatedTime(rs.getTimestamp("created_time").toLocalDateTime());
-        schedule.setUpdatedTime(rs.getTimestamp("updated_time").toLocalDateTime());
-
-        return schedule;
+        return Schedule.builder()
+            .scheduleId(rs.getLong("schedule_id"))
+            .managerId(rs.getLong("manager_id"))
+            .password(rs.getString("password"))
+            .contents(rs.getString("contents"))
+            .createdTime(rs.getTimestamp("created_time").toLocalDateTime())
+            .updatedTime(rs.getTimestamp("updated_time").toLocalDateTime())
+            .build();
     }
 }

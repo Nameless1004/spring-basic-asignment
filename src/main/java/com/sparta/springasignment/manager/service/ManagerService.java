@@ -2,7 +2,6 @@ package com.sparta.springasignment.manager.service;
 
 import com.sparta.springasignment.manager.dto.ManagerRequestDto;
 import com.sparta.springasignment.manager.dto.ManagerResponseDto;
-import com.sparta.springasignment.manager.dto.ManagerUpdateRequestDto;
 import com.sparta.springasignment.manager.entity.Manager;
 import com.sparta.springasignment.manager.repository.ManagerRepository;
 import java.time.LocalDateTime;
@@ -22,11 +21,12 @@ public class ManagerService {
 
   // DB 저장
   public ManagerResponseDto save(ManagerRequestDto managerDto) {
-    Manager manager = new Manager();
-    manager.setName(managerDto.getName());
-    manager.setEmail(managerDto.getEmail());
-    manager.setCreatedTime(LocalDateTime.now());
-    manager.setUpdatedTime(LocalDateTime.now());
+    Manager manager = Manager.builder()
+        .name(managerDto.getName())
+        .email(managerDto.getEmail())
+        .createdTime(LocalDateTime.now())
+        .updatedTime(LocalDateTime.now())
+        .build();
 
     Long id = repository.save(manager);
 
@@ -38,7 +38,7 @@ public class ManagerService {
   }
 
   // 업데이트
-  public ManagerResponseDto updateManager(Long id, ManagerUpdateRequestDto managerUpdateDto) {
+  public ManagerResponseDto updateManager(Long id, ManagerRequestDto managerUpdateDto) {
     Optional<Manager> managerById = repository.findById(id);
     Manager manager = repository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));

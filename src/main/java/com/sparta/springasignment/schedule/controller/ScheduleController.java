@@ -3,7 +3,6 @@ package com.sparta.springasignment.schedule.controller;
 import com.sparta.springasignment.schedule.dto.ScheduleDeleteDto;
 import com.sparta.springasignment.schedule.dto.ScheduleRequestDto;
 import com.sparta.springasignment.schedule.dto.ScheduleResponseDto;
-import com.sparta.springasignment.schedule.dto.ScheduleUpdateRequestDto;
 import com.sparta.springasignment.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -25,40 +24,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/schedules")
 @RequiredArgsConstructor
 @Validated
 public class ScheduleController {
 
   private final ScheduleService service;
 
-  @GetMapping("/schedules")
+  @GetMapping
   public ResponseEntity<List<ScheduleResponseDto>> getAllSchedule(
       @Positive @RequestParam(required = false) Long managerId,
       @RequestParam(required = false) @Pattern(regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$") String updatedTime) {
     return new ResponseEntity<>(service.findAllSchedules(updatedTime, managerId), HttpStatus.OK);
   }
 
-  @GetMapping("/schedules/{scheduleId}")
+  @GetMapping("/{scheduleId}")
   public ResponseEntity<ScheduleResponseDto> getSchedule(@Positive @PathVariable Long scheduleId) {
     return new ResponseEntity<>(service.findScheduleById(scheduleId), HttpStatus.OK);
   }
 
-  @PostMapping("/schedules")
+  @PostMapping
   public ResponseEntity<ScheduleResponseDto> postSchedule(
       @Valid @RequestBody ScheduleRequestDto dto) {
     ScheduleResponseDto save = service.save(dto);
     return new ResponseEntity<>(save, HttpStatus.CREATED);
   }
 
-  @PutMapping("/schedules/{scheduleId}")
+  @PutMapping("/{scheduleId}")
   public ResponseEntity<ScheduleResponseDto> putSchedule(@Positive @PathVariable Long scheduleId,
-      @Valid @RequestBody ScheduleUpdateRequestDto dto) {
+      @Valid @RequestBody ScheduleRequestDto dto) {
     ScheduleResponseDto scheduleResponseDto = service.updateSchedule(scheduleId, dto);
     return new ResponseEntity<>(scheduleResponseDto, HttpStatus.OK);
   }
 
-  @DeleteMapping("/schedules/{scheduleId}")
+  @DeleteMapping("/{scheduleId}")
   public ResponseEntity deleteSchedule(@Positive @PathVariable Long scheduleId,
       @Valid @RequestBody ScheduleDeleteDto dto) {
     service.delete(scheduleId, dto);
@@ -66,7 +65,7 @@ public class ScheduleController {
   }
 
   // page
-  @GetMapping("/schedules/")
+  @GetMapping("/")
   public ResponseEntity<List<ScheduleResponseDto>> getAllSchedulesByPage(
       @Min(1) @RequestParam(defaultValue = "1") Integer page,
       @Min(1) @RequestParam(defaultValue = "1") Integer size) {

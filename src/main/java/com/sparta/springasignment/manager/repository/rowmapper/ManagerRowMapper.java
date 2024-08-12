@@ -8,15 +8,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ManagerRowMapper implements RowMapper<Manager> {
-    @Override
-    public Manager mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Manager manager = new Manager();
-        manager.setId(rs.getLong("manager_id"));
-        manager.setName(rs.getString("name"));
-        manager.setEmail(rs.getString("email"));
-        manager.setCreatedTime(rs.getTimestamp("created_time").toLocalDateTime());
-        manager.setUpdatedTime(rs.getTimestamp("updated_time").toLocalDateTime());
 
-        return manager;
-    }
+  @Override
+  public Manager mapRow(ResultSet rs, int rowNum) throws SQLException {
+    return Manager.builder().id(rs.getLong("manager_id")).name(rs.getString("name"))
+        .email(rs.getString("email")).createdTime(rs.getTimestamp("created_time").toLocalDateTime())
+        .updatedTime(rs.getTimestamp("updated_time").toLocalDateTime()).build();
+  }
 }

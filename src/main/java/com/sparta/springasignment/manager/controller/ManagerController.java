@@ -2,7 +2,6 @@ package com.sparta.springasignment.manager.controller;
 
 import com.sparta.springasignment.manager.dto.ManagerRequestDto;
 import com.sparta.springasignment.manager.dto.ManagerResponseDto;
-import com.sparta.springasignment.manager.dto.ManagerUpdateRequestDto;
 import com.sparta.springasignment.manager.service.ManagerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -21,37 +20,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/managers")
 @RequiredArgsConstructor
 @Validated
 public class ManagerController {
 
   private final ManagerService service;
 
-  @GetMapping("/managers")
+  @GetMapping
   public ResponseEntity<List<ManagerResponseDto>> getAllManagers() {
     return new ResponseEntity<>(service.findAllManagers(), HttpStatus.OK);
   }
 
-  @GetMapping("/managers/{managerId}")
+  @GetMapping("/{managerId}")
   public ResponseEntity<ManagerResponseDto> getManager(@Positive @PathVariable Long managerId) {
     return new ResponseEntity<>(service.findManagerById(managerId), HttpStatus.OK);
   }
 
-  @PostMapping("/managers")
+  @PostMapping
   public ResponseEntity<ManagerResponseDto> postManager(@Valid @RequestBody ManagerRequestDto dto) {
     ManagerResponseDto save = service.save(dto);
     return new ResponseEntity<>(save, HttpStatus.CREATED);
   }
 
-  @PutMapping("/managers/{managerId}")
+  @PutMapping("/{managerId}")
   public ResponseEntity<ManagerResponseDto> updateManager(@Positive @PathVariable Long managerId,
-      @Valid @RequestBody ManagerUpdateRequestDto dto) {
+      @Valid @RequestBody ManagerRequestDto dto) {
     ManagerResponseDto responseDto = service.updateManager(managerId, dto);
     return new ResponseEntity<>(responseDto, HttpStatus.OK);
   }
 
-  @DeleteMapping("/managers/{managerId}")
+  @DeleteMapping("/{managerId}")
   public ResponseEntity deleteManager(@Positive @PathVariable Long managerId) {
     service.delete(managerId);
     return ResponseEntity.ok().build();
