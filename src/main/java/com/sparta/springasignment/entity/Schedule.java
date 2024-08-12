@@ -12,11 +12,12 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Schedule implements  Entity {
-    private Long scheduleId;
-    private Long managerId;
-    private String password;
-    private String contents;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+public class Schedule implements Entity {
+
+  private Long scheduleId;
+  private Long managerId;
+  private String password;
+  private String contents;
+  private LocalDateTime createdTime;
+  private LocalDateTime updatedTime;
 }

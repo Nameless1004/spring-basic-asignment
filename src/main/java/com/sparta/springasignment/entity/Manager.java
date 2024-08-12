@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Manager implements  Entity{
-    private Long id;
-    private String name;
-    private String email;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+public class Manager implements Entity {
+
+  private Long id;
+  private String name;
+  private String email;
+  private LocalDateTime createdTime;
+  private LocalDateTime updatedTime;
 }

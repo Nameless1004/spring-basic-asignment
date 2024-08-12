@@ -13,14 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleUpdateRequestDto {
-    @NotNull
-    @Positive
-    private Long managerId;
 
-    @NotBlank
-    @Size(min = 1, max = 200)
-    private String contents;
+  @NotNull
+  @Positive
+  private Long managerId;
 
-    @NotBlank
-    private String password;
+  @NotBlank
+  @Size(min = 1, max = 200)
+  private String contents;
+
+  @NotBlank
+  private String password;
 }

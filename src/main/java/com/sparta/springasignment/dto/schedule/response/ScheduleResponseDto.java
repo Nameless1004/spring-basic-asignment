@@ -8,10 +8,11 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class ScheduleResponseDto {
-    private Long scheduleId;
-    private Long managerId;
-    private String password;
-    private String contents;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+
+  private Long scheduleId;
+  private Long managerId;
+  private String password;
+  private String contents;
+  private LocalDateTime createdTime;
+  private LocalDateTime updatedTime;
 }

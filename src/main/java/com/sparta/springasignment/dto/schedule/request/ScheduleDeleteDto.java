@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleDeleteDto {
-    @NotBlank
-    @Size(min = 1, max = 20)
-    private String password;
+
+  @NotBlank
+  @Size(min = 1, max = 20)
+  private String password;
 }

@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 public class ManagerResponseDto {
-    private Long id;
-    private String name;
-    private String email;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+
+  private Long id;
+  private String name;
+  private String email;
+  private LocalDateTime createdTime;
+  private LocalDateTime updatedTime;
 }

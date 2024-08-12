@@ -21,42 +21,50 @@ import java.util.List;
 @Validated
 public class ScheduleController {
 
-    private final ScheduleService service;
+  private final ScheduleService service;
 
-    @GetMapping("/schedules")
-    public ResponseEntity<List<ScheduleResponseDto>> getAllSchedule(@Positive @RequestParam(required = false) Long managerId, @RequestParam(required = false)@Pattern(regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$") String updatedTime){
-        return new ResponseEntity<>(service.findAllSchedules(updatedTime, managerId), HttpStatus.OK);
-    }
+  @GetMapping("/schedules")
+  public ResponseEntity<List<ScheduleResponseDto>> getAllSchedule(
+      @Positive @RequestParam(required = false) Long managerId,
+      @RequestParam(required = false) @Pattern(regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$") String updatedTime) {
+    return new ResponseEntity<>(service.findAllSchedules(updatedTime, managerId), HttpStatus.OK);
+  }
 
-    @GetMapping("/schedules/{scheduleId}")
-    public ResponseEntity<ScheduleResponseDto> getSchedule(@Positive @PathVariable Long scheduleId){
-        return new ResponseEntity<>(service.findScheduleById(scheduleId), HttpStatus.OK);
-    }
+  @GetMapping("/schedules/{scheduleId}")
+  public ResponseEntity<ScheduleResponseDto> getSchedule(@Positive @PathVariable Long scheduleId) {
+    return new ResponseEntity<>(service.findScheduleById(scheduleId), HttpStatus.OK);
+  }
 
-    @PostMapping("/schedules")
-    public ResponseEntity<ScheduleResponseDto> postSchedule(@Valid @RequestBody ScheduleRequestDto dto){
-        ScheduleResponseDto save = service.save(dto);
-        return new ResponseEntity<>(save, HttpStatus.CREATED);
-    }
+  @PostMapping("/schedules")
+  public ResponseEntity<ScheduleResponseDto> postSchedule(
+      @Valid @RequestBody ScheduleRequestDto dto) {
+    ScheduleResponseDto save = service.save(dto);
+    return new ResponseEntity<>(save, HttpStatus.CREATED);
+  }
 
-    @PutMapping("/schedules/{scheduleId}")
-    public ResponseEntity<ScheduleResponseDto> putSchedule(@Positive @PathVariable Long scheduleId, @Valid @RequestBody ScheduleUpdateRequestDto dto){
-        ScheduleResponseDto scheduleResponseDto = service.updateSchedule(scheduleId, dto);
-        return new ResponseEntity<>(scheduleResponseDto, HttpStatus.OK);
-    }
+  @PutMapping("/schedules/{scheduleId}")
+  public ResponseEntity<ScheduleResponseDto> putSchedule(@Positive @PathVariable Long scheduleId,
+      @Valid @RequestBody ScheduleUpdateRequestDto dto) {
+    ScheduleResponseDto scheduleResponseDto = service.updateSchedule(scheduleId, dto);
+    return new ResponseEntity<>(scheduleResponseDto, HttpStatus.OK);
+  }
 
-    @DeleteMapping("/schedules/{scheduleId}")
-    public ResponseEntity deleteSchedule(@Positive @PathVariable Long scheduleId, @Valid @RequestBody ScheduleDeleteDto dto){
-        service.delete(scheduleId, dto);
-        return ResponseEntity.ok().build();
-    }
+  @DeleteMapping("/schedules/{scheduleId}")
+  public ResponseEntity deleteSchedule(@Positive @PathVariable Long scheduleId,
+      @Valid @RequestBody ScheduleDeleteDto dto) {
+    service.delete(scheduleId, dto);
+    return ResponseEntity.ok().build();
+  }
 
-    // page
-    @GetMapping("/schedules/")
-    public ResponseEntity<List<ScheduleResponseDto>> getAllSchedulesByPage(@Min(1) @RequestParam(defaultValue = "1") Integer page, @Min(1) @RequestParam(defaultValue = "1") Integer size){
-        List<ScheduleResponseDto> schedulsByPage = service.findSchedulsByPage(page, size);
-        ResponseEntity<List<ScheduleResponseDto>> response = new ResponseEntity<>(schedulsByPage, HttpStatus.OK);
-        return response;
-    }
+  // page
+  @GetMapping("/schedules/")
+  public ResponseEntity<List<ScheduleResponseDto>> getAllSchedulesByPage(
+      @Min(1) @RequestParam(defaultValue = "1") Integer page,
+      @Min(1) @RequestParam(defaultValue = "1") Integer size) {
+    List<ScheduleResponseDto> schedulsByPage = service.findSchedulsByPage(page, size);
+    ResponseEntity<List<ScheduleResponseDto>> response = new ResponseEntity<>(schedulsByPage,
+        HttpStatus.OK);
+    return response;
+  }
 
 }
