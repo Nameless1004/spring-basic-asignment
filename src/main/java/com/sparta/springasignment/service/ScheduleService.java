@@ -7,114 +7,125 @@ import com.sparta.springasignment.dto.schedule.request.ScheduleUpdateRequestDto;
 import com.sparta.springasignment.dto.schedule.response.ScheduleResponseDto;
 import com.sparta.springasignment.entity.Schedule;
 import com.sparta.springasignment.repository.interfaces.ScheduleRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
 
-    private final ScheduleRepository repository;
+  private final ScheduleRepository repository;
 
-    // DB 저장
-    public ScheduleResponseDto save(ScheduleRequestDto scheduleRequestDto) {
-        Schedule schedule = new Schedule();
-        schedule.setManagerId(scheduleRequestDto.getManagerId());
-        schedule.setPassword(scheduleRequestDto.getPassword());
-        schedule.setContents(scheduleRequestDto.getContents());
-        schedule.setCreatedTime(LocalDateTime.now());
-        schedule.setUpdatedTime(LocalDateTime.now());
+  // DB 저장
+  public ScheduleResponseDto save(ScheduleRequestDto scheduleRequestDto) {
+    Schedule schedule = Schedule.builder().managerId(scheduleRequestDto.getManagerId())
+        .password(scheduleRequestDto.getPassword()).contents(scheduleRequestDto.getContents())
+        .createdTime(LocalDateTime.now()).updatedTime(LocalDateTime.now()).build();
 
-        Long id = repository.save(schedule);
+    Long id = repository.save(schedule);
 
-        schedule.setScheduleId(id);
-        ScheduleResponseDto responseManagerDto = new ScheduleResponseDto(schedule.getScheduleId(), schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime());
-        return responseManagerDto;
+    schedule.setScheduleId(id);
+    return ScheduleResponseDto.builder().scheduleId(schedule.getScheduleId())
+        .managerId(schedule.getManagerId()).password(schedule.getPassword())
+        .contents(schedule.getContents()).createdTime(schedule.getCreatedTime())
+        .updatedTime(schedule.getUpdatedTime()).build();
+  }
+
+  // 업데이트
+  public ScheduleResponseDto updateSchedule(Long scheduleId,
+      ScheduleUpdateRequestDto updateRequestDto) {
+
+    Schedule target = repository.findById(scheduleId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
+
+    if (!target.getPassword().equals(updateRequestDto.getPassword())) {
+      throw new MissmatchPasswordException();
     }
 
-    // 업데이트
-    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto) {
-        Optional<Schedule> targetOp = repository.findById(scheduleId);
-        if (targetOp.isPresent()) {
-            Schedule target = targetOp.get();
-            if (!target.getPassword().equals(updateRequestDto.getPassword())) {
-                throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
-            }
-            target.setUpdatedTime(LocalDateTime.now());
-            target.setContents(updateRequestDto.getContents());
-            target.setManagerId(updateRequestDto.getManagerId());
-            repository.update(target);
+    target.setUpdatedTime(LocalDateTime.now());
+    target.setContents(updateRequestDto.getContents());
+    target.setManagerId(updateRequestDto.getManagerId());
+    repository.update(target);
 
-            ScheduleResponseDto ret = new ScheduleResponseDto(target.getScheduleId(), target.getManagerId(), target.getPassword(), target.getContents(), target.getCreatedTime(), target.getUpdatedTime());
-            return ret;
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 id입니다.");
-        }
+    return ScheduleResponseDto.builder().scheduleId(target.getScheduleId())
+        .managerId(target.getManagerId()).password(target.getPassword())
+        .contents(target.getContents()).createdTime(target.getCreatedTime())
+        .updatedTime(target.getUpdatedTime()).build();
+  }
+
+  // 삭제
+  public ScheduleResponseDto delete(Long id, ScheduleDeleteDto deleteDto) {
+    Schedule deleted = repository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id 입니다."));
+
+    if (!deleted.getPassword().equals(deleteDto.getPassword())) {
+      throw new MissmatchPasswordException();
     }
 
-    // 삭제
-    public ScheduleResponseDto delete(Long id, ScheduleDeleteDto deleteDto) {
-        Optional<Schedule> find = repository.findById(id);
-        if (find.isPresent()) {
-            Schedule deleted = find.get();
-            if (!deleted.getPassword().equals(deleteDto.getPassword())) {
-                throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
-            }
-            repository.delete(deleted);
-            ScheduleResponseDto deletedSchedule = new ScheduleResponseDto(deleted.getScheduleId(), deleted.getManagerId(), deleted.getPassword(), deleted.getContents(), deleted.getCreatedTime(), deleted.getUpdatedTime());
-            return deletedSchedule;
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 id 입니다.");
-        }
+    repository.delete(deleted);
+
+    return ScheduleResponseDto.builder().scheduleId(deleted.getScheduleId())
+        .managerId(deleted.getManagerId()).password(deleted.getPassword())
+        .contents(deleted.getContents()).createdTime(deleted.getCreatedTime())
+        .updatedTime(deleted.getUpdatedTime()).build();
+  }
+
+  // 다건 조회
+  public List<ScheduleResponseDto> findAllSchedules(String updatedTime, Long managerId) {
+    String sql = "select * from schedules";
+
+    if (updatedTime != null && managerId == null) {
+      sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')",
+          updatedTime);
+    } else if (updatedTime == null && managerId != null) {
+      sql += " where manager_id = " + managerId;
+    } else if (updatedTime != null && managerId != null) {
+      sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')",
+          updatedTime) + " and manager_id = " + managerId;
     }
 
-    // 다건 조회
-    public List<ScheduleResponseDto> findAllSchedules(String updatedTime, Long managerId) {
-        String sql = "select * from schedules";
+    sql += " order by updated_time desc";
 
-        if (updatedTime != null && managerId == null) {
-            sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updatedTime);
-        } else if (updatedTime == null && managerId != null) {
-            sql += " where manager_id = " + managerId;
-        } else if (updatedTime != null && managerId != null) {
-            sql += MessageFormat.format(" where DATE_FORMAT(updated_time, ''%Y-%m-%d'') in (''{0}'')", updatedTime) + " and manager_id = " + managerId;
-        }
+    List<Schedule> allManager = repository.findAllByQuery(sql);
+    return allManager.stream().map(schedule -> {
+      return ScheduleResponseDto.builder().scheduleId(schedule.getScheduleId())
+          .managerId(schedule.getManagerId()).password(schedule.getPassword())
+          .contents(schedule.getContents()).createdTime(schedule.getCreatedTime())
+          .updatedTime(schedule.getUpdatedTime()).build();
+    }).toList();
+  }
 
-        sql += " order by updated_time desc";
+  // 단건 조회
+  public ScheduleResponseDto findScheduleById(Long id) {
+    Schedule schedule = repository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
 
-        List<Schedule> allManager = repository.findAllByQuery(sql);
-        var result = allManager.stream().map(x -> {
-            ScheduleResponseDto dto = new ScheduleResponseDto(x.getScheduleId(), x.getManagerId(), x.getPassword(), x.getContents(), x.getCreatedTime(), x.getUpdatedTime());
-            return dto;
-        }).toList();
-        return result;
-    }
+    return ScheduleResponseDto.builder().scheduleId(schedule.getScheduleId())
+        .managerId(schedule.getManagerId()).password(schedule.getPassword())
+        .contents(schedule.getContents()).createdTime(schedule.getCreatedTime())
+        .updatedTime(schedule.getUpdatedTime()).build();
+  }
 
-    // 단건 조회
-    public ScheduleResponseDto findScheduleById(Long id) {
-        Optional<Schedule> managerById = repository.findById(id);
-        if (managerById.isPresent()) {
-            Schedule schedule = managerById.get();
-            ScheduleResponseDto dto = new ScheduleResponseDto(schedule.getScheduleId(), schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime());
-            return dto;
-        } else {
-            throw new IllegalArgumentException("존재하지 않는 아이디입니다.");
-        }
-    }
+  // 페이지 조회
+  public List<ScheduleResponseDto> findSchedulsByPage(Integer pageNum, Integer pageSize) {
+    List<Schedule> schedulesByPage = repository.findAllByPage(pageNum, pageSize);
 
-    // 페이지 조회
-    public List<ScheduleResponseDto> findSchedulsByPage(Integer pageNum, Integer pageSize) {
-        List<Schedule> schedulesByPage = repository.findAllByPage(pageNum, pageSize);
-        List<ScheduleResponseDto> list = schedulesByPage.stream().map(x -> {
-            ScheduleResponseDto dto = new ScheduleResponseDto(x.getScheduleId(), x.getManagerId(), x.getPassword(), x.getContents(), x.getCreatedTime(), x.getUpdatedTime());
-            return dto;
-        }).toList();
+    return schedulesByPage.stream().map(schedule -> {
+      return ScheduleResponseDto.builder().scheduleId(schedule.getScheduleId())
+          .managerId(schedule.getManagerId()).password(schedule.getPassword())
+          .contents(schedule.getContents()).createdTime(schedule.getCreatedTime())
+          .updatedTime(schedule.getUpdatedTime()).build();
+    }).toList();
+  }
 
-        return list;
-    }
+  @ExceptionHandler({IllegalArgumentException.class})
+  public ResponseEntity<String> handle(Exception e) {
+    return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+  }
 }
