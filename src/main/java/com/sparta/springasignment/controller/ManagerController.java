@@ -1,11 +1,10 @@
 package com.sparta.springasignment.controller;
 
-import com.sparta.springasignment.dto.request.ManagerRequestDto;
-import com.sparta.springasignment.dto.response.ManagerResponseDto;
-import com.sparta.springasignment.dto.request.ManagerUpdateRequestDto;
+import com.sparta.springasignment.dto.manager.request.ManagerRequestDto;
+import com.sparta.springasignment.dto.manager.response.ManagerResponseDto;
+import com.sparta.springasignment.dto.manager.request.ManagerUpdateRequestDto;
 import com.sparta.springasignment.service.ManagerService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.sparta.springasignment.dto.response;
+package com.sparta.springasignment.dto.manager.response;
 
 
 import lombok.AllArgsConstructor;

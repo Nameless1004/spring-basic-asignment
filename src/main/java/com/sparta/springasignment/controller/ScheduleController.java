@@ -1,8 +1,9 @@
 package com.sparta.springasignment.controller;
 
-import com.sparta.springasignment.dto.request.ScheduleRequestDto;
-import com.sparta.springasignment.dto.response.ScheduleResponseDto;
-import com.sparta.springasignment.dto.request.ScheduleUpdateRequestDto;
+import com.sparta.springasignment.dto.schedule.request.ScheduleDeleteDto;
+import com.sparta.springasignment.dto.schedule.request.ScheduleRequestDto;
+import com.sparta.springasignment.dto.schedule.response.ScheduleResponseDto;
+import com.sparta.springasignment.dto.schedule.request.ScheduleUpdateRequestDto;
 import com.sparta.springasignment.service.ScheduleService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -39,14 +40,14 @@ public class ScheduleController {
     }
 
     @PutMapping("/schedules/{scheduleId}")
-    public ResponseEntity<ScheduleResponseDto> putSchedule(@Positive @PathVariable Long scheduleId, @Size(min = 1, max = 30) @NotBlank @RequestParam @Size(min = 1, max = 20) String password, @Valid @RequestBody ScheduleUpdateRequestDto dto){
-        ScheduleResponseDto scheduleResponseDto = service.updateSchedule(scheduleId, dto, password);
+    public ResponseEntity<ScheduleResponseDto> putSchedule(@Positive @PathVariable Long scheduleId, @Valid @RequestBody ScheduleUpdateRequestDto dto){
+        ScheduleResponseDto scheduleResponseDto = service.updateSchedule(scheduleId, dto);
         return new ResponseEntity<>(scheduleResponseDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/schedules/{scheduleId}")
-    public ResponseEntity deleteSchedule(@Positive @PathVariable Long scheduleId, @RequestParam @NotBlank @Size(min = 1, max = 20) String password){
-        service.delete(scheduleId, password);
+    public ResponseEntity deleteSchedule(@Positive @PathVariable Long scheduleId, @Valid @RequestBody ScheduleDeleteDto dto){
+        service.delete(scheduleId, dto);
         return ResponseEntity.ok().build();
     }
 

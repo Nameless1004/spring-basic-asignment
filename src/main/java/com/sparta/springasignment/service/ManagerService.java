@@ -1,8 +1,8 @@
 package com.sparta.springasignment.service;
 
-import com.sparta.springasignment.dto.request.ManagerRequestDto;
-import com.sparta.springasignment.dto.response.ManagerResponseDto;
-import com.sparta.springasignment.dto.request.ManagerUpdateRequestDto;
+import com.sparta.springasignment.dto.manager.request.ManagerRequestDto;
+import com.sparta.springasignment.dto.manager.response.ManagerResponseDto;
+import com.sparta.springasignment.dto.manager.request.ManagerUpdateRequestDto;
 import com.sparta.springasignment.entity.Manager;
 import com.sparta.springasignment.repository.ManagerRepository;
 import lombok.RequiredArgsConstructor;

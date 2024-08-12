@@ -1,9 +1,10 @@
 package com.sparta.springasignment.service;
 
 import com.sparta.springasignment.common.exception.MissmatchPasswordException;
-import com.sparta.springasignment.dto.request.ScheduleRequestDto;
-import com.sparta.springasignment.dto.response.ScheduleResponseDto;
-import com.sparta.springasignment.dto.request.ScheduleUpdateRequestDto;
+import com.sparta.springasignment.dto.schedule.request.ScheduleDeleteDto;
+import com.sparta.springasignment.dto.schedule.request.ScheduleRequestDto;
+import com.sparta.springasignment.dto.schedule.response.ScheduleResponseDto;
+import com.sparta.springasignment.dto.schedule.request.ScheduleUpdateRequestDto;
 import com.sparta.springasignment.entity.Schedule;
 import com.sparta.springasignment.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -39,11 +38,11 @@ public class ScheduleService {
     }
 
     // 업데이트
-    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto, String password) {
+    public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto) {
         Optional<Schedule> targetOp = repository.findScheduleById(scheduleId);
         if (targetOp.isPresent()) {
             Schedule target = targetOp.get();
-            if (!target.getPassword().equals(password)) {
+            if (!target.getPassword().equals(updateRequestDto.getPassword())) {
                 throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
             }
             target.setUpdatedTime(LocalDateTime.now());
@@ -59,11 +58,11 @@ public class ScheduleService {
     }
 
     // 삭제
-    public ScheduleResponseDto delete(Long id, String password) {
+    public ScheduleResponseDto delete(Long id, ScheduleDeleteDto deleteDto) {
         Optional<Schedule> find = repository.findScheduleById(id);
         if (find.isPresent()) {
             Schedule deleted = find.get();
-            if (!deleted.getPassword().equals(password)) {
+            if (!deleted.getPassword().equals(deleteDto.getPassword())) {
                 throw new MissmatchPasswordException("비밀번호가 일치하지 않습니다.");
             }
             repository.delete(deleted);

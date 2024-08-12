@@ -1,12 +1,12 @@
-package com.sparta.springasignment.dto.request;
+package com.sparta.springasignment.dto.manager.request;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class ManagerRequestDto {
     @NotBlank
