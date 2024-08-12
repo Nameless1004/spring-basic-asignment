@@ -35,11 +35,13 @@ public class ScheduleController {
   public ResponseEntity<List<ScheduleResponseDto>> getAllSchedule(
       @Positive @RequestParam(required = false) Long managerId,
       @RequestParam(required = false) @Pattern(regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$") String updatedTime) {
-    return new ResponseEntity<>(service.findAllSchedules(updatedTime, managerId), HttpStatus.OK);
+    return new ResponseEntity<>(service.findAllSchedules(updatedTime, managerId),
+        HttpStatus.OK);
   }
 
   @GetMapping("/{scheduleId}")
-  public ResponseEntity<ScheduleResponseDto> getSchedule(@Positive @PathVariable Long scheduleId) {
+  public ResponseEntity<ScheduleResponseDto> getSchedule(
+      @Positive @PathVariable Long scheduleId) {
     return new ResponseEntity<>(service.findScheduleById(scheduleId), HttpStatus.OK);
   }
 

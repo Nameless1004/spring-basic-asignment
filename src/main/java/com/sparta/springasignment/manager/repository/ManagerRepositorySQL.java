@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ManagerRepositorySQL {
-    
+
   public String save() {
     return "INSERT INTO managers (name, email, created_time, updated_time) VALUES(?,?,?,?)";
   }

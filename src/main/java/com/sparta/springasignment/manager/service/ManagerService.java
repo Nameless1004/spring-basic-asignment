@@ -1,5 +1,6 @@
 package com.sparta.springasignment.manager.service;
 
+import com.sparta.springasignment.common.exception.InvalidIdException;
 import com.sparta.springasignment.manager.dto.ManagerRequestDto;
 import com.sparta.springasignment.manager.dto.ManagerResponseDto;
 import com.sparta.springasignment.manager.entity.Manager;
@@ -22,26 +23,26 @@ public class ManagerService {
   // DB 저장
   public ManagerResponseDto save(ManagerRequestDto managerDto) {
     Manager manager = Manager.builder()
-        .name(managerDto.getName())
-        .email(managerDto.getEmail())
-        .createdTime(LocalDateTime.now())
-        .updatedTime(LocalDateTime.now())
-        .build();
+                             .name(managerDto.getName())
+                             .email(managerDto.getEmail())
+                             .createdTime(LocalDateTime.now())
+                             .updatedTime(LocalDateTime.now())
+                             .build();
 
     Long id = repository.save(manager);
 
     manager.setId(id);
 
     return ManagerResponseDto.builder().id(manager.getId()).name(manager.getName())
-        .email(manager.getEmail()).createdTime(manager.getCreatedTime())
-        .updatedTime(manager.getUpdatedTime()).build();
+                             .email(manager.getEmail()).createdTime(manager.getCreatedTime())
+                             .updatedTime(manager.getUpdatedTime()).build();
   }
 
   // 업데이트
   public ManagerResponseDto updateManager(Long id, ManagerRequestDto managerUpdateDto) {
     Optional<Manager> managerById = repository.findById(id);
     Manager manager = repository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id입니다."));
+                                .orElseThrow(() -> new InvalidIdException(id));
 
     manager.setUpdatedTime(LocalDateTime.now());
     manager.setName(managerUpdateDto.getName());
@@ -50,20 +51,20 @@ public class ManagerService {
     repository.update(manager);
 
     return ManagerResponseDto.builder().id(manager.getId()).name(manager.getName())
-        .email(manager.getEmail()).createdTime(manager.getCreatedTime())
-        .updatedTime(manager.getUpdatedTime()).build();
+                             .email(manager.getEmail()).createdTime(manager.getCreatedTime())
+                             .updatedTime(manager.getUpdatedTime()).build();
   }
 
   // 삭제
   public ManagerResponseDto delete(Long managerId) {
     Manager deleted = repository.findById(managerId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 id 입니다."));
+                                .orElseThrow(() -> new InvalidIdException(managerId));
 
     repository.delete(deleted);
 
     return ManagerResponseDto.builder().id(deleted.getId()).name(deleted.getName())
-        .email(deleted.getEmail()).createdTime(deleted.getCreatedTime())
-        .updatedTime(deleted.getUpdatedTime()).build();
+                             .email(deleted.getEmail()).createdTime(deleted.getCreatedTime())
+                             .updatedTime(deleted.getUpdatedTime()).build();
 
   }
 
@@ -73,8 +74,9 @@ public class ManagerService {
 
     return allManager.stream().map(manager -> {
       return ManagerResponseDto.builder().id(manager.getId()).name(manager.getName())
-          .email(manager.getEmail()).createdTime(manager.getCreatedTime())
-          .updatedTime(manager.getUpdatedTime()).build();
+                               .email(manager.getEmail())
+                               .createdTime(manager.getCreatedTime())
+                               .updatedTime(manager.getUpdatedTime()).build();
     }).toList();
   }
 
@@ -82,11 +84,11 @@ public class ManagerService {
   // 단건 조회
   public ManagerResponseDto findManagerById(Long id) {
     Manager manager = repository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+                                .orElseThrow(() -> new InvalidIdException(id));
 
     return ManagerResponseDto.builder().id(manager.getId()).name(manager.getName())
-        .email(manager.getEmail()).createdTime(manager.getCreatedTime())
-        .updatedTime(manager.getUpdatedTime()).build();
+                             .email(manager.getEmail()).createdTime(manager.getCreatedTime())
+                             .updatedTime(manager.getUpdatedTime()).build();
   }
 
   @ExceptionHandler({IllegalArgumentException.class})

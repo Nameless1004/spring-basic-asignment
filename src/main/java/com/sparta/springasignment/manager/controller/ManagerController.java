@@ -38,7 +38,8 @@ public class ManagerController {
   }
 
   @PostMapping
-  public ResponseEntity<ManagerResponseDto> postManager(@Valid @RequestBody ManagerRequestDto dto) {
+  public ResponseEntity<ManagerResponseDto> postManager(
+      @Valid @RequestBody ManagerRequestDto dto) {
     ManagerResponseDto save = service.save(dto);
     return new ResponseEntity<>(save, HttpStatus.CREATED);
   }

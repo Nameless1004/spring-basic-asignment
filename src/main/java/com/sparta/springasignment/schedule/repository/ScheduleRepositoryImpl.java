@@ -29,7 +29,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     @Override
     public Long save(Schedule schedule) {
         jdbcTemplate.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(sql.save(), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = con.prepareStatement(sql.save(),
+                Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setLong(1, schedule.getManagerId());
             preparedStatement.setString(2, schedule.getPassword());
             preparedStatement.setString(3, schedule.getContents());
@@ -42,7 +43,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     @Override
     public void update(Schedule schedule) {
-        jdbcTemplate.update(sql.update(), schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime(), schedule.getScheduleId());
+        jdbcTemplate.update(sql.update(), schedule.getManagerId(), schedule.getPassword(),
+            schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime(),
+            schedule.getScheduleId());
     }
 
     @Override
@@ -76,7 +79,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
             int offset = (page - 1) * size;
 
             return jdbcTemplate.query(sql.findByPage(), rowMapper, limit, offset);
-        } catch (DataAccessException e){
+        } catch (DataAccessException e) {
             return new ArrayList<>();
         }
     }

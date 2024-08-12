@@ -12,7 +12,8 @@ public class ManagerRowMapper implements RowMapper<Manager> {
   @Override
   public Manager mapRow(ResultSet rs, int rowNum) throws SQLException {
     return Manager.builder().id(rs.getLong("manager_id")).name(rs.getString("name"))
-        .email(rs.getString("email")).createdTime(rs.getTimestamp("created_time").toLocalDateTime())
-        .updatedTime(rs.getTimestamp("updated_time").toLocalDateTime()).build();
+                  .email(rs.getString("email"))
+                  .createdTime(rs.getTimestamp("created_time").toLocalDateTime())
+                  .updatedTime(rs.getTimestamp("updated_time").toLocalDateTime()).build();
   }
 }

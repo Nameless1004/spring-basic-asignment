@@ -5,13 +5,13 @@ import java.util.Optional;
 
 public interface Repository<E extends Entity, Key> {
 
-  Key save(E entity);
+    Key save(E entity);
 
-  void update(E entity);
+    void update(E entity);
 
-  void delete(E entity);
+    void delete(E entity);
 
-  Optional<E> findById(Key id);
+    Optional<E> findById(Key id);
 
-  List<E> findAll();
+    List<E> findAll();
 }

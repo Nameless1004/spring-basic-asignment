@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class ManagerRepositoryImpl implements ManagerRepository {
-    
+
   private final JdbcTemplate jdbcTemplate;
   private final ManagerRepositorySQL sql;
   private final ManagerRowMapper managerRowMapper;
