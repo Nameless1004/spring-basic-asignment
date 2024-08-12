@@ -1,6 +1,7 @@
 package com.sparta.springasignment.repository;
 
 import com.sparta.springasignment.entity.Schedule;
+import com.sparta.springasignment.repository.interfaces.ScheduleRepository;
 import com.sparta.springasignment.repository.rowmapper.ScheduleRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ScheduleRepository {
+public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final ScheduleRepositorySQL sql;
@@ -24,6 +25,7 @@ public class ScheduleRepository {
 
     private final KeyHolder keyHolder = new GeneratedKeyHolder();
 
+    @Override
     public Long save(Schedule schedule) {
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(sql.save(), Statement.RETURN_GENERATED_KEYS);
@@ -37,12 +39,18 @@ public class ScheduleRepository {
         return keyHolder.getKey().longValue();
     }
 
+    @Override
     public void update(Schedule schedule) {
         jdbcTemplate.update(sql.update(), schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime(), schedule.getScheduleId());
     }
 
+    @Override
+    public void delete(Schedule schedule) {
+        jdbcTemplate.update(sql.delete(), schedule.getScheduleId());
+    }
 
-    public Optional<Schedule> findScheduleById(Long scheduleId) {
+    @Override
+    public Optional<Schedule> findById(Long scheduleId) {
         try {
             Schedule schedule = jdbcTemplate.queryForObject(sql.findById(), rowMapper, scheduleId);
             return Optional.ofNullable(schedule);
@@ -51,16 +59,8 @@ public class ScheduleRepository {
         }
     }
 
-    public List<Schedule> findAllSchedulesByQuery(String query) {
-        try{
-        List<Schedule> schedules = jdbcTemplate.query(query, rowMapper);
-        return schedules;
-        } catch(DataAccessException e){
-            return new ArrayList<>();
-        }
-    }
-
-    public List<Schedule> findAllSchedules() {
+    @Override
+    public List<Schedule> findAll() {
         try {
             List<Schedule> schedules = jdbcTemplate.query(sql.findAll(), rowMapper);
             return schedules;
@@ -69,7 +69,18 @@ public class ScheduleRepository {
         }
     }
 
-    public List<Schedule> findSchedulesByPage(Integer page, Integer size) {
+    @Override
+    public List<Schedule> findAllByQuery(String query) {
+        try{
+            List<Schedule> schedules = jdbcTemplate.query(query, rowMapper);
+            return schedules;
+        } catch(DataAccessException e){
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public List<Schedule> findAllByPage(Integer page, Integer size) {
         try {
             int limit = size;
             int offset = (page - 1) * size;
@@ -80,9 +91,5 @@ public class ScheduleRepository {
         } catch (DataAccessException e){
             return new ArrayList<>();
         }
-    }
-
-    public void delete(Schedule schedule) {
-        jdbcTemplate.update(sql.delete(), schedule.getScheduleId());
     }
 }

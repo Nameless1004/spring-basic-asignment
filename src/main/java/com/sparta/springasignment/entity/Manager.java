@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Manager {
+public class Manager implements  Entity{
     private Long id;
     private String name;
     private String email;

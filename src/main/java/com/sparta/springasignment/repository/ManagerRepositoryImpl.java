@@ -1,6 +1,7 @@
 package com.sparta.springasignment.repository;
 
 import com.sparta.springasignment.entity.Manager;
+import com.sparta.springasignment.repository.interfaces.ManagerRepository;
 import com.sparta.springasignment.repository.rowmapper.ManagerRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
@@ -18,7 +19,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ManagerRepository {
+public class ManagerRepositoryImpl  implements ManagerRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final ManagerRepositorySQL sql;
@@ -26,6 +27,7 @@ public class ManagerRepository {
 
     private final KeyHolder keyHolder = new GeneratedKeyHolder();
 
+    @Override
     public Long save(Manager manager) {
         if (manager.getId() == null) {
             jdbcTemplate.update(con -> {
@@ -40,11 +42,18 @@ public class ManagerRepository {
         return keyHolder.getKey().longValue();
     }
 
+    @Override
     public void update(Manager manager) {
         jdbcTemplate.update(sql.update(), manager.getName(), manager.getEmail(), manager.getCreatedTime(), manager.getUpdatedTime(), manager.getId());
     }
 
-    public Optional<Manager> findManagerById(Long id) {
+    @Override
+    public void delete(Manager manager) {
+        jdbcTemplate.update(sql.delete(), manager.getId());
+    }
+
+    @Override
+    public Optional<Manager> findById(Long id) {
         try {
             Manager manager = jdbcTemplate.queryForObject(sql.findById(), managerRowMapper, id);
             return Optional.ofNullable(manager);
@@ -53,16 +62,13 @@ public class ManagerRepository {
         }
     }
 
-    public List<Manager> findAllManagers() {
+    @Override
+    public List<Manager> findAll() {
         try {
             List<Manager> managers = jdbcTemplate.query(sql.findAll(), managerRowMapper);
             return managers;
         } catch (DataAccessException e) {
             return new ArrayList<>();
         }
-    }
-
-    public void delete(Manager manager) {
-        jdbcTemplate.update(sql.delete(), manager.getId());
     }
 }

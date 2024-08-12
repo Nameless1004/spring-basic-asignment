@@ -4,7 +4,8 @@ import com.sparta.springasignment.dto.manager.request.ManagerRequestDto;
 import com.sparta.springasignment.dto.manager.response.ManagerResponseDto;
 import com.sparta.springasignment.dto.manager.request.ManagerUpdateRequestDto;
 import com.sparta.springasignment.entity.Manager;
-import com.sparta.springasignment.repository.ManagerRepository;
+import com.sparta.springasignment.repository.ManagerRepositoryImpl;
+import com.sparta.springasignment.repository.interfaces.ManagerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,7 @@ public class ManagerService {
 
     // 업데이트
     public ManagerResponseDto updateManager(Long id, ManagerUpdateRequestDto managerUpdateDto) {
-        Optional<Manager> managerById = repository.findManagerById(id);
+        Optional<Manager> managerById = repository.findById(id);
         if(managerById.isPresent()){
             Manager manager = managerById.get();
 
@@ -54,7 +55,7 @@ public class ManagerService {
 
     // 삭제
     public ManagerResponseDto delete(Long managerId){
-        Optional<Manager> find = repository.findManagerById(managerId);
+        Optional<Manager> find = repository.findById(managerId);
         if(find.isPresent()){
             Manager deleted = find.get();
             repository.delete(deleted);
@@ -67,7 +68,7 @@ public class ManagerService {
 
     // 다건 조회
     public List<ManagerResponseDto> findAllManagers() {
-        List<Manager> allManager = repository.findAllManagers();
+        List<Manager> allManager = repository.findAll();
         return allManager.stream()
                 .map(x->{
                     ManagerResponseDto dto = new ManagerResponseDto(x.getId(), x.getName(), x.getEmail(), x.getCreatedTime(), x.getUpdatedTime());
@@ -78,7 +79,7 @@ public class ManagerService {
 
     // 단건 조회
     public ManagerResponseDto findManagerById(Long id) {
-        Optional<Manager> managerById = repository.findManagerById(id);
+        Optional<Manager> managerById = repository.findById(id);
         if(managerById.isPresent()) {
             Manager manager = managerById.get();
             ManagerResponseDto dto = new ManagerResponseDto(manager.getId(), manager.getName(), manager.getEmail(), manager.getCreatedTime(), manager.getUpdatedTime());

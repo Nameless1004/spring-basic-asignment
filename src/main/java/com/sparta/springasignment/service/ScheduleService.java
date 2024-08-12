@@ -3,10 +3,10 @@ package com.sparta.springasignment.service;
 import com.sparta.springasignment.common.exception.MissmatchPasswordException;
 import com.sparta.springasignment.dto.schedule.request.ScheduleDeleteDto;
 import com.sparta.springasignment.dto.schedule.request.ScheduleRequestDto;
-import com.sparta.springasignment.dto.schedule.response.ScheduleResponseDto;
 import com.sparta.springasignment.dto.schedule.request.ScheduleUpdateRequestDto;
+import com.sparta.springasignment.dto.schedule.response.ScheduleResponseDto;
 import com.sparta.springasignment.entity.Schedule;
-import com.sparta.springasignment.repository.ScheduleRepository;
+import com.sparta.springasignment.repository.interfaces.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +39,7 @@ public class ScheduleService {
 
     // 업데이트
     public ScheduleResponseDto updateSchedule(Long scheduleId, ScheduleUpdateRequestDto updateRequestDto) {
-        Optional<Schedule> targetOp = repository.findScheduleById(scheduleId);
+        Optional<Schedule> targetOp = repository.findById(scheduleId);
         if (targetOp.isPresent()) {
             Schedule target = targetOp.get();
             if (!target.getPassword().equals(updateRequestDto.getPassword())) {
@@ -59,7 +59,7 @@ public class ScheduleService {
 
     // 삭제
     public ScheduleResponseDto delete(Long id, ScheduleDeleteDto deleteDto) {
-        Optional<Schedule> find = repository.findScheduleById(id);
+        Optional<Schedule> find = repository.findById(id);
         if (find.isPresent()) {
             Schedule deleted = find.get();
             if (!deleted.getPassword().equals(deleteDto.getPassword())) {
@@ -87,7 +87,7 @@ public class ScheduleService {
 
         sql += " order by updated_time desc";
 
-        List<Schedule> allManager = repository.findAllSchedulesByQuery(sql);
+        List<Schedule> allManager = repository.findAllByQuery(sql);
         var result = allManager.stream().map(x -> {
             ScheduleResponseDto dto = new ScheduleResponseDto(x.getScheduleId(), x.getManagerId(), x.getPassword(), x.getContents(), x.getCreatedTime(), x.getUpdatedTime());
             return dto;
@@ -97,7 +97,7 @@ public class ScheduleService {
 
     // 단건 조회
     public ScheduleResponseDto findScheduleById(Long id) {
-        Optional<Schedule> managerById = repository.findScheduleById(id);
+        Optional<Schedule> managerById = repository.findById(id);
         if (managerById.isPresent()) {
             Schedule schedule = managerById.get();
             ScheduleResponseDto dto = new ScheduleResponseDto(schedule.getScheduleId(), schedule.getManagerId(), schedule.getPassword(), schedule.getContents(), schedule.getCreatedTime(), schedule.getUpdatedTime());
@@ -109,7 +109,7 @@ public class ScheduleService {
 
     // 페이지 조회
     public List<ScheduleResponseDto> findSchedulsByPage(Integer pageNum, Integer pageSize) {
-        List<Schedule> schedulesByPage = repository.findSchedulesByPage(pageNum, pageSize);
+        List<Schedule> schedulesByPage = repository.findAllByPage(pageNum, pageSize);
         List<ScheduleResponseDto> list = schedulesByPage.stream().map(x -> {
             ScheduleResponseDto dto = new ScheduleResponseDto(x.getScheduleId(), x.getManagerId(), x.getPassword(), x.getContents(), x.getCreatedTime(), x.getUpdatedTime());
             return dto;
