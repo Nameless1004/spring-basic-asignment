@@ -52,7 +52,7 @@ public class ManagerController {
   }
 
   @DeleteMapping("/{managerId}")
-  public ResponseEntity deleteManager(@Positive @PathVariable Long managerId) {
+  public ResponseEntity<Void> deleteManager(@Positive @PathVariable Long managerId) {
     service.delete(managerId);
     return ResponseEntity.ok().build();
   }

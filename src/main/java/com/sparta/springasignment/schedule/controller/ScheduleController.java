@@ -60,7 +60,7 @@ public class ScheduleController {
   }
 
   @DeleteMapping("/{scheduleId}")
-  public ResponseEntity deleteSchedule(@Positive @PathVariable Long scheduleId,
+  public ResponseEntity<Void> deleteSchedule(@Positive @PathVariable Long scheduleId,
       @Valid @RequestBody ScheduleDeleteDto dto) {
     service.delete(scheduleId, dto);
     return ResponseEntity.ok().build();
