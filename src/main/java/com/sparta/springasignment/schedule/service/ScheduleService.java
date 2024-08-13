@@ -23,20 +23,25 @@ public class ScheduleService {
 
     // DB 저장
     public ScheduleResponseDto save(ScheduleRequestDto scheduleRequestDto) {
-        Schedule schedule = Schedule.builder().managerId(scheduleRequestDto.getManagerId())
-                                    .password(scheduleRequestDto.getPassword())
-                                    .contents(scheduleRequestDto.getContents())
-                                    .createdTime(LocalDateTime.now())
-                                    .updatedTime(LocalDateTime.now()).build();
+        Schedule schedule = Schedule.builder()
+            .managerId(scheduleRequestDto.getManagerId())
+            .password(scheduleRequestDto.getPassword())
+            .contents(scheduleRequestDto.getContents())
+            .createdTime(LocalDateTime.now())
+            .updatedTime(LocalDateTime.now())
+            .build();
 
         Long id = repository.save(schedule);
 
         schedule.setScheduleId(id);
-        return ScheduleResponseDto.builder().scheduleId(schedule.getScheduleId())
-                                  .managerId(schedule.getManagerId())
-                                  .password(schedule.getPassword()).contents(schedule.getContents())
-                                  .createdTime(schedule.getCreatedTime())
-                                  .updatedTime(schedule.getUpdatedTime()).build();
+        return ScheduleResponseDto.builder()
+            .scheduleId(schedule.getScheduleId())
+            .managerId(schedule.getManagerId())
+            .password(schedule.getPassword())
+            .contents(schedule.getContents())
+            .createdTime(schedule.getCreatedTime())
+            .updatedTime(schedule.getUpdatedTime())
+            .build();
     }
 
     // 업데이트
@@ -44,9 +49,10 @@ public class ScheduleService {
         ScheduleRequestDto updateRequestDto) {
 
         Schedule target = repository.findById(scheduleId)
-                                    .orElseThrow(() -> new InvalidIdException(scheduleId));
+            .orElseThrow(() -> new InvalidIdException(scheduleId));
 
-        if (!target.getPassword().equals(updateRequestDto.getPassword())) {
+        if (!target.getPassword()
+            .equals(updateRequestDto.getPassword())) {
             throw new MissmatchPasswordException();
         }
 
@@ -55,67 +61,87 @@ public class ScheduleService {
         target.setManagerId(updateRequestDto.getManagerId());
         repository.update(target);
 
-        return ScheduleResponseDto.builder().scheduleId(target.getScheduleId())
-                                  .managerId(target.getManagerId()).password(target.getPassword())
-                                  .contents(target.getContents())
-                                  .createdTime(target.getCreatedTime())
-                                  .updatedTime(target.getUpdatedTime()).build();
+        return ScheduleResponseDto.builder()
+            .scheduleId(target.getScheduleId())
+            .managerId(target.getManagerId())
+            .password(target.getPassword())
+            .contents(target.getContents())
+            .createdTime(target.getCreatedTime())
+            .updatedTime(target.getUpdatedTime())
+            .build();
     }
 
     // 삭제
     public ScheduleResponseDto delete(Long id, ScheduleDeleteDto deleteDto) {
-        Schedule deleted = repository.findById(id).orElseThrow(() -> new InvalidIdException(id));
+        Schedule deleted = repository.findById(id)
+            .orElseThrow(() -> new InvalidIdException(id));
 
-        if (!deleted.getPassword().equals(deleteDto.getPassword())) {
+        if (!deleted.getPassword()
+            .equals(deleteDto.getPassword())) {
             throw new MissmatchPasswordException();
         }
 
         repository.delete(deleted);
 
-        return ScheduleResponseDto.builder().scheduleId(deleted.getScheduleId())
-                                  .managerId(deleted.getManagerId()).password(deleted.getPassword())
-                                  .contents(deleted.getContents())
-                                  .createdTime(deleted.getCreatedTime())
-                                  .updatedTime(deleted.getUpdatedTime()).build();
+        return ScheduleResponseDto.builder()
+            .scheduleId(deleted.getScheduleId())
+            .managerId(deleted.getManagerId())
+            .password(deleted.getPassword())
+            .contents(deleted.getContents())
+            .createdTime(deleted.getCreatedTime())
+            .updatedTime(deleted.getUpdatedTime())
+            .build();
     }
 
     // 다건 조회
     public List<ScheduleResponseDto> findAllSchedules(String updatedTime, Long managerId) {
 
         List<Schedule> allManager = repository.findAllByFilter(updatedTime, managerId);
-        return allManager.stream().map(schedule -> {
-            return ScheduleResponseDto.builder().scheduleId(schedule.getScheduleId())
-                                      .managerId(schedule.getManagerId())
-                                      .password(schedule.getPassword())
-                                      .contents(schedule.getContents())
-                                      .createdTime(schedule.getCreatedTime())
-                                      .updatedTime(schedule.getUpdatedTime()).build();
-        }).toList();
+        return allManager.stream()
+            .map(schedule -> {
+                return ScheduleResponseDto.builder()
+                    .scheduleId(schedule.getScheduleId())
+                    .managerId(schedule.getManagerId())
+                    .password(schedule.getPassword())
+                    .contents(schedule.getContents())
+                    .createdTime(schedule.getCreatedTime())
+                    .updatedTime(schedule.getUpdatedTime())
+                    .build();
+            })
+            .toList();
     }
 
     // 단건 조회
     public ScheduleResponseDto findScheduleById(Long id) {
-        Schedule schedule = repository.findById(id).orElseThrow(() -> new InvalidIdException(id));
+        Schedule schedule = repository.findById(id)
+            .orElseThrow(() -> new InvalidIdException(id));
 
-        return ScheduleResponseDto.builder().scheduleId(schedule.getScheduleId())
-                                  .managerId(schedule.getManagerId())
-                                  .password(schedule.getPassword()).contents(schedule.getContents())
-                                  .createdTime(schedule.getCreatedTime())
-                                  .updatedTime(schedule.getUpdatedTime()).build();
+        return ScheduleResponseDto.builder()
+            .scheduleId(schedule.getScheduleId())
+            .managerId(schedule.getManagerId())
+            .password(schedule.getPassword())
+            .contents(schedule.getContents())
+            .createdTime(schedule.getCreatedTime())
+            .updatedTime(schedule.getUpdatedTime())
+            .build();
     }
 
     // 페이지 조회
     public List<ScheduleResponseDto> findSchedulsByPage(Integer pageNum, Integer pageSize) {
         List<Schedule> schedulesByPage = repository.findAllByPage(pageNum, pageSize);
 
-        return schedulesByPage.stream().map(schedule -> {
-            return ScheduleResponseDto.builder().scheduleId(schedule.getScheduleId())
-                                      .managerId(schedule.getManagerId())
-                                      .password(schedule.getPassword())
-                                      .contents(schedule.getContents())
-                                      .createdTime(schedule.getCreatedTime())
-                                      .updatedTime(schedule.getUpdatedTime()).build();
-        }).toList();
+        return schedulesByPage.stream()
+            .map(schedule -> {
+                return ScheduleResponseDto.builder()
+                    .scheduleId(schedule.getScheduleId())
+                    .managerId(schedule.getManagerId())
+                    .password(schedule.getPassword())
+                    .contents(schedule.getContents())
+                    .createdTime(schedule.getCreatedTime())
+                    .updatedTime(schedule.getUpdatedTime())
+                    .build();
+            })
+            .toList();
     }
 
     @ExceptionHandler({IllegalArgumentException.class})

@@ -25,36 +25,37 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class ManagerController {
 
-  private final ManagerService service;
+    private final ManagerService service;
 
-  @GetMapping
-  public ResponseEntity<List<ManagerResponseDto>> getAllManagers() {
-    return new ResponseEntity<>(service.findAllManagers(), HttpStatus.OK);
-  }
+    @GetMapping
+    public ResponseEntity<List<ManagerResponseDto>> getAllManagers() {
+        return new ResponseEntity<>(service.findAllManagers(), HttpStatus.OK);
+    }
 
-  @GetMapping("/{managerId}")
-  public ResponseEntity<ManagerResponseDto> getManager(@Positive @PathVariable Long managerId) {
-    return new ResponseEntity<>(service.findManagerById(managerId), HttpStatus.OK);
-  }
+    @GetMapping("/{managerId}")
+    public ResponseEntity<ManagerResponseDto> getManager(@Positive @PathVariable Long managerId) {
+        return new ResponseEntity<>(service.findManagerById(managerId), HttpStatus.OK);
+    }
 
-  @PostMapping
-  public ResponseEntity<ManagerResponseDto> postManager(
-      @Valid @RequestBody ManagerRequestDto dto) {
-    ManagerResponseDto save = service.save(dto);
-    return new ResponseEntity<>(save, HttpStatus.CREATED);
-  }
+    @PostMapping
+    public ResponseEntity<ManagerResponseDto> postManager(
+        @Valid @RequestBody ManagerRequestDto dto) {
+        ManagerResponseDto save = service.save(dto);
+        return new ResponseEntity<>(save, HttpStatus.CREATED);
+    }
 
-  @PutMapping("/{managerId}")
-  public ResponseEntity<ManagerResponseDto> updateManager(@Positive @PathVariable Long managerId,
-      @Valid @RequestBody ManagerRequestDto dto) {
-    ManagerResponseDto responseDto = service.updateManager(managerId, dto);
-    return new ResponseEntity<>(responseDto, HttpStatus.OK);
-  }
+    @PutMapping("/{managerId}")
+    public ResponseEntity<ManagerResponseDto> updateManager(@Positive @PathVariable Long managerId,
+        @Valid @RequestBody ManagerRequestDto dto) {
+        ManagerResponseDto responseDto = service.updateManager(managerId, dto);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
 
-  @DeleteMapping("/{managerId}")
-  public ResponseEntity<Void> deleteManager(@Positive @PathVariable Long managerId) {
-    service.delete(managerId);
-    return ResponseEntity.ok().build();
-  }
+    @DeleteMapping("/{managerId}")
+    public ResponseEntity<Void> deleteManager(@Positive @PathVariable Long managerId) {
+        service.delete(managerId);
+        return ResponseEntity.ok()
+            .build();
+    }
 
 }

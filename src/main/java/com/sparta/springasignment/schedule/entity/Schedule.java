@@ -14,15 +14,15 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Schedule implements Entity {
 
-  @Setter
-  private Long scheduleId;
-  @Setter
-  private Long managerId;
+    @Setter
+    private Long scheduleId;
+    @Setter
+    private Long managerId;
 
-  private String password;
-  @Setter
-  private String contents;
-  private LocalDateTime createdTime;
-  @Setter
-  private LocalDateTime updatedTime;
+    private String password;
+    @Setter
+    private String contents;
+    private LocalDateTime createdTime;
+    @Setter
+    private LocalDateTime updatedTime;
 }

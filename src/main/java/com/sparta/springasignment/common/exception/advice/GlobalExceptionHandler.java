@@ -23,9 +23,11 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Map<String, String>> handleValidationExceptions(
       MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
-    ex.getBindingResult().getAllErrors()
-      .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
-    return ResponseEntity.badRequest().body(errors);
+    ex.getBindingResult()
+        .getAllErrors()
+        .forEach(c -> errors.put(((FieldError) c).getField(), c.getDefaultMessage()));
+    return ResponseEntity.badRequest()
+        .body(errors);
   }
 
   @ExceptionHandler({ConstraintViolationException.class})
@@ -36,11 +38,14 @@ public class GlobalExceptionHandler {
     for (final var constraint : constraintViolations) {
 
       String message = constraint.getMessage();
-      String[] split = constraint.getPropertyPath().toString().split("\\.");
+      String[] split = constraint.getPropertyPath()
+          .toString()
+          .split("\\.");
       String propertyPath = split[split.length - 1];
       errors.put(propertyPath, message);
 
     }
-    return ResponseEntity.badRequest().body(errors);
+    return ResponseEntity.badRequest()
+        .body(errors);
   }
 }

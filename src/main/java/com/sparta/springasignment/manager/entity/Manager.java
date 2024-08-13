@@ -15,16 +15,16 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Manager implements Entity {
 
-  @Setter
-  private Long id;
+    @Setter
+    private Long id;
 
-  @Setter
-  private String name;
+    @Setter
+    private String name;
 
-  @Setter
-  private String email;
-  private LocalDateTime createdTime;
+    @Setter
+    private String email;
+    private LocalDateTime createdTime;
 
-  @Setter
-  private LocalDateTime updatedTime;
+    @Setter
+    private LocalDateTime updatedTime;
 }

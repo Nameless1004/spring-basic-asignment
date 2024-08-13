@@ -38,7 +38,8 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
             preparedStatement.setTimestamp(5, Timestamp.valueOf(schedule.getUpdatedTime()));
             return preparedStatement;
         }, keyHolder);
-        return Objects.requireNonNull(keyHolder.getKey()).longValue();
+        return Objects.requireNonNull(keyHolder.getKey())
+            .longValue();
     }
 
     @Override

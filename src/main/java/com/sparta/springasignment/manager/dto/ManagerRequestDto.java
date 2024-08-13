@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ManagerRequestDto {
 
-  @NotBlank
-  @Size(min = 1, max = 40)
-  private String name;
-  @Email
-  @Size(min = 1, max = 40)
-  private String email;
+    @NotBlank
+    @Size(min = 1, max = 40)
+    private String name;
+    @Email
+    @Size(min = 1, max = 40)
+    private String email;
 }
