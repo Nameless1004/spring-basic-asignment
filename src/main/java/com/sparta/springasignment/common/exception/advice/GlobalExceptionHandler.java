@@ -9,9 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@org.springframework.web.bind.annotation.RestControllerAdvice
-public class RestControllerAdvice {
+@RestControllerAdvice
+public class GlobalExceptionHandler {
 
   @ExceptionHandler({IllegalArgumentException.class})
   public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
