@@ -34,8 +34,10 @@ public class ScheduleController {
     @GetMapping
     public ResponseEntity<List<ScheduleResponseDto>> getAllSchedule(
         @Positive @RequestParam(required = false) Long managerId,
-        @RequestParam(required = false) @Pattern(regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$") String updatedTime) {
-        return new ResponseEntity<>(service.findAllSchedules(updatedTime, managerId),
+        @RequestParam(required = false) @Pattern(regexp = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$") String updatedTime,
+        @RequestParam @Min(1) Long page, @RequestParam @Min(1) Long pageSize) {
+        return new ResponseEntity<>(
+            service.findAllSchedules(updatedTime, managerId, page, pageSize),
             HttpStatus.OK);
     }
 
@@ -65,17 +67,6 @@ public class ScheduleController {
         service.delete(scheduleId, dto);
         return ResponseEntity.ok()
             .build();
-    }
-
-    // page
-    @GetMapping("/")
-    public ResponseEntity<List<ScheduleResponseDto>> getAllSchedulesByPage(
-        @Min(1) @RequestParam(defaultValue = "1") Integer page,
-        @Min(1) @RequestParam(defaultValue = "1") Integer size) {
-        List<ScheduleResponseDto> schedulsByPage = service.findSchedulsByPage(page, size);
-        ResponseEntity<List<ScheduleResponseDto>> response = new ResponseEntity<>(schedulsByPage,
-            HttpStatus.OK);
-        return response;
     }
 
 }

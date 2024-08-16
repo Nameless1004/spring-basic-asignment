@@ -74,21 +74,13 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public List<Schedule> findAllByPage(Integer page, Integer size) {
+    public List<Schedule> findAll(String updatedTime, Long managerId, Long page,
+        Long pageSize) {
         try {
-            int limit = size;
-            int offset = (page - 1) * size;
-
-            return jdbcTemplate.query(sql.findByPage(), rowMapper, limit, offset);
-        } catch (DataAccessException e) {
-            return new ArrayList<>();
-        }
-    }
-
-    @Override
-    public List<Schedule> findAllByFilter(String updatedTime, Long managerId) {
-        try {
-            return jdbcTemplate.query(sql.findAllByFilter(updatedTime, managerId), rowMapper);
+            Long limit = pageSize;
+            Long offset = (page - 1) * pageSize;
+            return jdbcTemplate.query(sql.findAllByFilter(updatedTime, managerId),
+                rowMapper, limit, offset);
         } catch (DataAccessException e) {
             return new ArrayList<>();
         }

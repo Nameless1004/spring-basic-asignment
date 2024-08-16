@@ -94,9 +94,11 @@ public class ScheduleService {
     }
 
     // 다건 조회
-    public List<ScheduleResponseDto> findAllSchedules(String updatedTime, Long managerId) {
+    public List<ScheduleResponseDto> findAllSchedules(String updatedTime, Long managerId, Long page,
+        Long pageSize) {
 
-        List<Schedule> allManager = repository.findAllByFilter(updatedTime, managerId);
+        List<Schedule> allManager = repository.findAll(updatedTime, managerId, page,
+            pageSize);
         return allManager.stream()
             .map(schedule -> {
                 return ScheduleResponseDto.builder()
@@ -124,24 +126,6 @@ public class ScheduleService {
             .createdTime(schedule.getCreatedTime())
             .updatedTime(schedule.getUpdatedTime())
             .build();
-    }
-
-    // 페이지 조회
-    public List<ScheduleResponseDto> findSchedulsByPage(Integer pageNum, Integer pageSize) {
-        List<Schedule> schedulesByPage = repository.findAllByPage(pageNum, pageSize);
-
-        return schedulesByPage.stream()
-            .map(schedule -> {
-                return ScheduleResponseDto.builder()
-                    .scheduleId(schedule.getScheduleId())
-                    .managerId(schedule.getManagerId())
-                    .password(schedule.getPassword())
-                    .contents(schedule.getContents())
-                    .createdTime(schedule.getCreatedTime())
-                    .updatedTime(schedule.getUpdatedTime())
-                    .build();
-            })
-            .toList();
     }
 
     @ExceptionHandler({IllegalArgumentException.class})

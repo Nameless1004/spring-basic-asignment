@@ -22,11 +22,6 @@ public class ScheduleRepositorySQL {
         return "SELECT * FROM schedules";
     }
 
-    public String findByPage() {
-        String query = "select * from schedules as s join (select schedule_id from schedules limit ? offset ?) as t on s.schedule_id = t.schedule_id";
-        return query;
-    }
-
     public String findAllByFilter(String updatedTime, Long managerId) {
         String sql = "select * from schedules";
 
@@ -43,6 +38,7 @@ public class ScheduleRepositorySQL {
         }
 
         sql += " order by updated_time desc";
+        sql += " limit ? offset ?";
         return sql;
     }
 
