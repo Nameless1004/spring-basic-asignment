@@ -26,7 +26,6 @@
 | 일정 수정     | PUT    | /api/schedules/{scheduleId} | 요청 body  | 수정 정보    | 200: 정상수정 |
 | 일정 목록 조회  | GET    | /api/schedules              | 요청 param | 다건 응답 정보 | 200:정상조회  |
 | 일정 조회     | GET    | /api/schedules/{scheduleId} | 요청 param | 단건 응답 정보 | 200:정상조회  |
-| 일정 페이징 조회 | GET    | /api/schedules/             | 요청 param | 페이지 조회   | 200:정상조회  |
 | 일정 삭제     | DELETE | /api/schedules/{scheduleId} | 요청 param | -        | 200:정상삭제  |
 
 <span style ="font-size:125%">[(Postman) 일정 API 명세서](https://documenter.getpostman.com/view/37553747/2sA3s3JBSX)</span>

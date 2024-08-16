@@ -10,10 +10,7 @@ import com.sparta.springasignment.schedule.repository.ScheduleRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Service
 @RequiredArgsConstructor
@@ -126,10 +123,5 @@ public class ScheduleService {
             .createdTime(schedule.getCreatedTime())
             .updatedTime(schedule.getUpdatedTime())
             .build();
-    }
-
-    @ExceptionHandler({IllegalArgumentException.class})
-    public ResponseEntity<String> handle(Exception e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
